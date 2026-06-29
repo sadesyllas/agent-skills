@@ -2,22 +2,44 @@
 # Install the skills in this repo into the skill directories of Claude Code,
 # OpenAI Codex, and Google Antigravity by symlinking each skill folder.
 #
-#   ./install.sh            # symlink (recommended; reflects future git pulls)
-#   ./install.sh --copy     # copy instead (use if symlinks are unavailable)
+#   ./install.sh                     # global install (all tools, recommended)
+#   ./install.sh --copy              # copy instead of symlink (if links unavailable)
+#   ./install.sh --project /path     # project install into /path/.agents/skills + .claude/skills
+#   ./install.sh --project /path --copy
+#
+# Antigravity note: the IDE and CLI currently read DIFFERENT global skill dirs and
+# the layout is still being standardized, so the global install targets all known
+# candidates. The per-project .agents/skills route is the most reliable.
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 skills_root="$repo_root/skills"
 
 mode="link"
-if [[ "${1:-}" == "--copy" ]]; then mode="copy"; fi
+project=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --copy) mode="copy"; shift ;;
+        --project) project="${2:?--project needs a path}"; shift 2 ;;
+        *) echo "unknown argument: $1" >&2; exit 1 ;;
+    esac
+done
 
-# User-level (global) skill directories for each tool.
-targets=(
-    "$HOME/.claude/skills"          # Claude Code
-    "$HOME/.codex/skills"           # OpenAI Codex
-    "$HOME/.gemini/config/skills"   # Google Antigravity
-)
+if [[ -n "$project" ]]; then
+    # Project scope: .agents/skills (Codex + Antigravity workspace) and .claude/skills (Claude Code).
+    project_root="$(cd "$project" && pwd)"
+    targets=("$project_root/.agents/skills" "$project_root/.claude/skills")
+    echo "Installing into project: $project_root"
+else
+    # User-level (global) skill directories for each tool.
+    targets=(
+        "$HOME/.claude/skills"                  # Claude Code
+        "$HOME/.codex/skills"                   # OpenAI Codex
+        "$HOME/.gemini/config/skills"           # Antigravity IDE / 2.0
+        "$HOME/.gemini/antigravity-cli/skills"  # Antigravity CLI (global)
+        "$HOME/.gemini/skills"                   # Antigravity (shared across tools)
+    )
+fi
 
 count=0
 for target in "${targets[@]}"; do
@@ -38,4 +60,4 @@ for target in "${targets[@]}"; do
 done
 
 echo ""
-echo "Done. Installed skills into ${#targets[@]} tool director(ies) ($count link(s)/cop(ies))."
+echo "Done. Installed skills into ${#targets[@]} director(ies) ($count link(s)/cop(ies))."

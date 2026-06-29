@@ -50,17 +50,36 @@ pwsh ./install.ps1 -Copy      # copy instead, if symlinks are unavailable
 > **Windows symlinks** require Developer Mode (Settings → System → For
 > developers) or an elevated shell. If linking fails, re-run with `-Copy`.
 
-### Where they land
+### Where they land (global install)
 
-| Tool                | User-level skills directory      |
-|---------------------|----------------------------------|
-| Claude Code         | `~/.claude/skills/`              |
-| OpenAI Codex        | `~/.codex/skills/`               |
-| Google Antigravity  | `~/.gemini/config/skills/`       |
+| Tool                       | User-level skills directory          |
+|----------------------------|--------------------------------------|
+| Claude Code                | `~/.claude/skills/`                  |
+| OpenAI Codex               | `~/.codex/skills/`                   |
+| Antigravity IDE / 2.0      | `~/.gemini/config/skills/`           |
+| Antigravity CLI (global)   | `~/.gemini/antigravity-cli/skills/`  |
+| Antigravity (shared)       | `~/.gemini/skills/`                  |
 
-For a single project instead of globally, copy/symlink the skill folders into
-the project's `.agents/skills/` (read natively by Codex and Antigravity) and
-`.claude/skills/` (Claude Code).
+> **Antigravity caveat.** The IDE and the CLI currently read *different* global
+> skill directories and the layout is still being standardized (see
+> [gemini-cli#17495](https://github.com/google-gemini/gemini-cli/issues/17495)),
+> so the installer writes to all known Antigravity candidates. If a future
+> Antigravity build settles on one path, prune the list. **Plugins are not
+> required** — Antigravity loads a standalone `SKILL.md` from any recognized
+> skills directory; plugins are only an optional way to *bundle/distribute*
+> skills, rules, MCP servers, and hooks.
+
+### Per-project install (most reliable)
+
+For a single project, install into its `.agents/skills/` (read natively by Codex
+and Antigravity workspaces) and `.claude/skills/` (Claude Code):
+
+```powershell
+pwsh ./install.ps1 -Project C:\path\to\repo
+```
+```bash
+./install.sh --project /path/to/repo
+```
 
 ## Use
 
