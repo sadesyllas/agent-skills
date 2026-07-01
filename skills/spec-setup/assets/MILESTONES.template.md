@@ -18,7 +18,7 @@
 - **Reviewed** — a reviewer has gone through the changes and they passed review.
 
 Advancing to the next milestone requires the current one to be **Done + Tested**.
-**Reviewed** is filled by the reviewer pass (see the `milestone-execution` skill)
+**Reviewed** is filled by the reviewer pass (see the `spec-exec` skill)
 and may legitimately lag behind implementation.
 
 ---

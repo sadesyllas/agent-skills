@@ -1,23 +1,23 @@
 ---
-name: spec-environment
-description: 'Bootstrap the engineering environment for a software project BEFORE any implementation begins. Use when starting a new library, application, or deployable PoC; when a repository has no SPEC.md yet; or when the user asks to "set up the spec", "plan the milestones", "prepare the project", or "bootstrap". Interactively builds SPEC.md with the user (purpose, components, dependencies, telemetry, integrations, auth, performance, testing, DRY, standards, documentation), generates an ordered MILESTONES.md with a Done/Tested/Reviewed tracking table, commits each artifact, and then hands off to the milestone-execution skill to build.'
+name: spec-env
+description: 'Bootstrap the engineering environment for a software project BEFORE any implementation begins. Use when starting a new library, application, or deployable PoC; when a repository has no SPEC.md yet; or when the user asks to "set up the spec", "plan the milestones", "prepare the project", or "bootstrap". Interactively builds SPEC.md with the user (purpose, components, dependencies, telemetry, integrations, auth, performance, testing, DRY, standards, documentation), generates an ordered MILESTONES.md with a Done/Tested/Reviewed tracking table, commits each artifact, and then hands off to the spec-exec skill to build.'
 ---
 
-# spec-environment — establish the environment before any code
+# spec-env — establish the environment before any code
 
 This skill prepares the ground for building a software system (a library, an
 application, a deployable PoC, etc.). **No implementation happens here.** The
 output of this skill is two committed, agreed-upon documents — `SPEC.md` and
-`MILESTONES.md` — and a clean handoff to the `milestone-execution` skill.
+`MILESTONES.md` — and a clean handoff to the `spec-exec` skill.
 
 ## When to use / when not to
 
 - **Use it** at the very start of a project, or whenever a repository does not
   yet have a complete `SPEC.md` and `MILESTONES.md`.
 - **Do not use it** to write product code, fix bugs, or implement milestones —
-  that is the job of `milestone-execution`.
+  that is the job of `spec-exec`.
 - If `SPEC.md` and `MILESTONES.md` already exist and the user wants to build,
-  switch to `milestone-execution` instead.
+  switch to `spec-exec` instead.
 
 ## The non-negotiable principle: spec before code
 
@@ -101,7 +101,7 @@ Never let code drift ahead of the spec.
 Once `SPEC.md` and `MILESTONES.md` are committed:
 
 1. Tell the user the environment is ready and summarize the milestone plan.
-2. Instruct them (and yourself) to invoke the **`milestone-execution`** skill to
+2. Instruct them (and yourself) to invoke the **`spec-exec`** skill to
    begin building — that skill enforces the engineering rules and drives the
    milestone-by-milestone loop. Explicit invocation is the most reliable handoff
    across tools; do not start coding under this skill.

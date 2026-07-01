@@ -1,9 +1,9 @@
 ---
-name: milestone-execution
+name: spec-exec
 description: 'Drive disciplined, milestone-by-milestone implementation and review of a project that already has SPEC.md and MILESTONES.md. Use when the user says "start building", "implement the next milestone", "continue", "code this", or "review the milestones", and whenever writing or changing product code in a repo that has SPEC.md and MILESTONES.md. Enforces the engineering rules: conform to SPEC.md, follow milestones strictly in order, no untested code advances, commit at every step, document every public type and member, honor DRY, and keep SPEC.md authoritative. Stops after each milestone to ask the user before continuing, and runs the reviewer / REVIEW.md workflow.'
 ---
 
-# milestone-execution — build the system, one milestone at a time
+# spec-exec — build the system, one milestone at a time
 
 This is the engineering compass for implementation. It governs every change to
 product code in a project that has a `SPEC.md` and a `MILESTONES.md`.
@@ -11,7 +11,7 @@ product code in a project that has a `SPEC.md` and a `MILESTONES.md`.
 ## Preconditions
 
 - `SPEC.md` and `MILESTONES.md` must exist at the repository root. If either is
-  missing or incomplete, **stop and use the `spec-environment` skill first** —
+  missing or incomplete, **stop and use the `spec-env` skill first** —
   do not start coding against an absent or partial spec.
 
 ## Re-anchor at the start of every milestone (do this — it is what keeps the compass true)
@@ -108,7 +108,7 @@ re-checks. Iterate until clean.
 If implementation reveals that `SPEC.md` must change, change the spec **first**:
 update `SPEC.md` (stating the shift in logic for non-trivial changes), reconcile
 `MILESTONES.md`, commit the spec change on its own, and only then resume coding.
-This mirrors the protocol owned by the `spec-environment` skill.
+This mirrors the protocol owned by the `spec-env` skill.
 
 ## Honesty and safety
 

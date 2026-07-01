@@ -10,7 +10,7 @@ the install location differs.
 
 ```
             ┌─────────────────────┐         ┌──────────────────────────┐
-  start ──▶ │  spec-environment   │ ──────▶ │   milestone-execution     │ ──▶ ship
+  start ──▶ │  spec-environment   │ ──────▶ │   spec-exec     │ ──▶ ship
             │  (the environment)  │ handoff │   (the execution)         │
             └─────────────────────┘         └──────────────────────────┘
 ```
@@ -18,14 +18,14 @@ the install location differs.
 1. **`spec-environment`** — runs once at project start. Interactively builds
    `SPEC.md` with you, derives an ordered `MILESTONES.md` with a
    Done/Tested/Reviewed tracking table, commits each, and hands off.
-2. **`milestone-execution`** — the engineering compass for building. Implements
+2. **`spec-exec`** — the engineering compass for building. Implements
    milestones strictly in order, commits every meaningful task, gates each
    milestone on Done + Tested, honors DRY and documentation rules, stops after
    each milestone to ask whether to continue, and runs the reviewer / `REVIEW.md`
    workflow.
 
 There is **no `AGENTS.md`** — the rules live inside the skills themselves. Skills
-load on demand rather than staying pinned to context, so `milestone-execution`
+load on demand rather than staying pinned to context, so `spec-exec`
 re-anchors at the start of every milestone (re-reads `SPEC.md`/`MILESTONES.md`
 and restates the rules) to stay reliable across long builds and context
 compaction.
@@ -86,7 +86,7 @@ pwsh ./install.ps1 -Project C:\path\to\repo
 - Starting a project: invoke **`spec-environment`** (e.g. ask the agent to "set
   up the spec and milestones"). Build `SPEC.md` together, then let it generate
   `MILESTONES.md`.
-- Building: invoke **`milestone-execution`** ("start building" / "implement the
+- Building: invoke **`spec-exec`** ("start building" / "implement the
   next milestone"). It implements one milestone, then stops and asks before the
   next — unless you tell it to run several.
 - Reviewing: ask it to "review the milestones". Findings go to `REVIEW.md`,
@@ -101,7 +101,7 @@ skills/
     assets/
       SPEC.template.md
       MILESTONES.template.md
-  milestone-execution/       # SKILL 2 — drive the build
+  spec-exec/       # SKILL 2 — drive the build
     SKILL.md
     assets/
       REVIEW.template.md
