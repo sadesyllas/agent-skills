@@ -69,6 +69,8 @@ always-in-context rules file.
    validation, configuration, or core features is reflected in `SPEC.md`
    immediately and accurately. Never let code drift from the spec.
 
+9. **One top-level type definition per file.** For programming languages (eg, C#), each code file declares at most one top-level type (eg, `class`/`struct`/`record`/`interface`/`enum`); an interface and its implementation must not share a file, and the file name matches the type. Nested types, constructs like C#'s `partial` types across files, and top-level statements in program entry files (eg, `Program.cs`) are allowed; For C#, generated EF migration `*.Designer.cs`/snapshot and `obj/`/`bin/` are exempt. Where possible, there must be an automated architecture test to validate these rules.
+
 ## The milestone loop (coder)
 
 For the current milestone:
