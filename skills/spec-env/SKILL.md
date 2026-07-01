@@ -1,118 +1,113 @@
 ---
-name: spec-exec
-description: 'Drive disciplined, milestone-by-milestone implementation and review of a project that already has SPEC.md and MILESTONES.md. Use when the user says "start building", "implement the next milestone", "continue", "code this", or "review the milestones", and whenever writing or changing product code in a repo that has SPEC.md and MILESTONES.md. Enforces the engineering rules: conform to SPEC.md, follow milestones strictly in order, no untested code advances, commit at every step, document every public type and member, honor DRY, and keep SPEC.md authoritative. Stops after each milestone to ask the user before continuing, and runs the reviewer / REVIEW.md workflow.'
+name: spec-env
+description: 'Bootstrap the engineering environment for a software project BEFORE any implementation begins. Use when starting a new library, application, or deployable PoC; when a repository has no SPEC.md yet; or when the user asks to "set up the spec", "plan the milestones", "prepare the project", or "bootstrap". Interactively builds SPEC.md with the user (purpose, components, dependencies, telemetry, integrations, auth, performance, testing, DRY, standards, documentation), generates an ordered MILESTONES.md with a Done/Tested/Reviewed tracking table, commits each artifact, and then hands off to the spec-exec skill to build.'
 ---
 
-# spec-exec — build the system, one milestone at a time
+# spec-env — establish the environment before any code
 
-This is the engineering compass for implementation. It governs every change to
-product code in a project that has a `SPEC.md` and a `MILESTONES.md`.
+This skill prepares the ground for building a software system (a library, an
+application, a deployable PoC, etc.). **No implementation happens here.** The
+output of this skill is two committed, agreed-upon documents — `SPEC.md` and
+`MILESTONES.md` — and a clean handoff to the `spec-exec` skill.
 
-## Preconditions
+## When to use / when not to
 
-- `SPEC.md` and `MILESTONES.md` must exist at the repository root. If either is
-  missing or incomplete, **stop and use the `spec-env` skill first** —
-  do not start coding against an absent or partial spec.
+- **Use it** at the very start of a project, or whenever a repository does not
+  yet have a complete `SPEC.md` and `MILESTONES.md`.
+- **Do not use it** to write product code, fix bugs, or implement milestones —
+  that is the job of `spec-exec`.
+- If `SPEC.md` and `MILESTONES.md` already exist and the user wants to build,
+  switch to `spec-exec` instead.
 
-## Re-anchor at the start of every milestone (do this — it is what keeps the compass true)
+## The non-negotiable principle: spec before code
 
-Skills load on demand and context gets compacted over a long build, so these
-rules will not stay resident on their own. Before working on **each** milestone,
-re-anchor explicitly:
+Nothing gets built until `SPEC.md` exists and the user has signed off on it.
+The spec is the single source of truth; code conforms to the spec, never the
+other way around. If reality forces a change, the spec changes **first** (see
+the SPEC-change protocol below).
 
-1. Re-read `SPEC.md` and `MILESTONES.md`.
-2. State out loud which milestone you are starting and its acceptance criteria
-   and required tests.
-3. Restate the rules below as the active constraints for this milestone.
+## Step 1 — Build `SPEC.md` interactively with the user
 
-Treat this as mandatory, not optional. It is the mechanism that replaces an
-always-in-context rules file.
+Create `SPEC.md` at the repository root. **Do not invent requirements.** Drive
+this as an interview: propose a draft for each section, ask the user to confirm
+or correct, and only record what is agreed. Use `assets/SPEC.template.md` in
+this skill as the skeleton.
 
-## The rules
+`SPEC.md` must **fully contain**:
 
-1. **Adhere to `SPEC.md`.** All code, configuration, and decisions must conform
-   to the specification. If a task would require deviating from `SPEC.md`, stop
-   and surface the conflict — do not improvise. Resolve it via the SPEC-change
-   protocol (below) before continuing.
+1. **Purpose and structure** — what the project is for and how it is organized.
+2. **Components** — the modules/services/projects and their responsibilities.
+3. **Dependencies** — libraries, frameworks, runtimes, and external tooling.
+4. **Telemetry** — how observability is produced (e.g. Serilog, OpenTelemetry,
+   metrics, structured logs, traces) and where it is emitted.
+5. **System interactions** — how the software talks to other systems (APIs,
+   message buses, databases, third parties), including protocols and contracts.
 
-2. **Follow `MILESTONES.md` strictly, in order.** Work on milestone `Mn+1` only
-   after `Mn` is complete. No skipping, reordering, or parallel work across
-   milestones. Always state which milestone a change belongs to before starting.
+`SPEC.md` must **explicitly state** (these are commitments, not suggestions):
 
-3. **A milestone is complete only when it is both `Done` and `Tested`.** Meet the
-   acceptance criteria **and** make the required tests pass before ticking the
-   `Done` and `Tested` columns (✅). Do not begin the next milestone until both
-   are ticked for the current one. (`Reviewed` is handled separately — see the
-   reviewer workflow — and may lag.)
+1. **Authentication & authorization** — what is required and how it is enforced.
+2. **Performance characteristics** — any latency, throughput, or resource
+   targets that must be met.
+3. **Full testing coverage** — the requirement that the system be thoroughly
+   tested (unit, integration, contract as applicable).
+4. **DRY** — the absolute requirement to honor Don't-Repeat-Yourself; no
+   duplicated logic, boilerplate, or query patterns.
+5. **Highest coding standards** — the requirement to uphold strong, idiomatic,
+   maintainable code.
+6. **Mandatory documentation** — documentation is required, especially for
+   public APIs and complex flows.
 
-4. **No untested code advances.** Run the tests defined for the current milestone
-   (unit, integration, contract as applicable) and confirm they are green before
-   declaring it complete. Report failures honestly with their output; never mark
-   `Tested` on red or skipped tests.
+When every section is agreed, **commit** `SPEC.md` on its own (e.g.
+`docs: add SPEC.md`). If the repository is not yet a git repo, initialize it
+first.
 
-5. **Commit at every step.** Create a git commit for **each meaningful task**
-   along the way — not just one per milestone. Each commit is focused, has a
-   clear message that references its milestone (e.g. `M2: add rate-limiter
-   middleware`), and leaves the repository buildable. Never commit secrets.
+## Step 2 — Generate `MILESTONES.md`
 
-6. **Document all types and public methods.** Every class, record, struct, enum,
-   interface, and every public method/property has a doc comment (e.g. `///` XML
-   docs in C#) that concisely explains what it does. This applies to production
-   code; test code is exempt. Document complex flows narratively too.
+Only after `SPEC.md` is complete and committed, derive `MILESTONES.md` at the
+repository root from it. Use `assets/MILESTONES.template.md` as the skeleton.
 
-7. **Honor DRY absolutely.** Do not duplicate logic, boilerplate, or query
-   patterns across handlers, repositories, or tests. Abstract repetition into
-   reusable helpers, extension methods, or shared classes. Do not copy-paste
-   code blocks.
+- Break the work into **very precise, ordered steps** that are implemented one
+  after another. Each milestone must be small enough to implement, test, and
+  review as a unit, and must have clear acceptance criteria and a defined set of
+  required tests.
+- Maintain a **tracking table** at the top with one row per milestone and three
+  status columns, each holding a green tick (✅) once achieved and a blank
+  marker (⬜) until then:
+  - **Done** — the milestone has been implemented.
+  - **Tested** — thorough tests have been written **and** they pass.
+  - **Reviewed** — a reviewer has gone through the codebase and the milestone's
+    changes have passed review.
+- Below the table, give each milestone its own detail section (scope,
+  acceptance criteria, required tests).
 
-8. **Keep `SPEC.md` up to date.** Any change to architecture, endpoints,
-   validation, configuration, or core features is reflected in `SPEC.md`
-   immediately and accurately. Never let code drift from the spec.
+**Commit** `MILESTONES.md` on its own (e.g. `docs: add MILESTONES.md`).
 
-## The milestone loop (coder)
+## Step 3 — The SPEC-change protocol (applies forever after)
 
-For the current milestone:
+Whenever something in `SPEC.md` must change — during planning or later during
+implementation — follow this order strictly:
 
-1. **Re-anchor** (see above).
-2. **Implement** the acceptance criteria, committing each meaningful task as you
-   go (rule 5). Keep the build green.
-3. **Test.** Write the required thorough tests and run them. They must pass.
-4. **Mark progress.** Tick `Done` and `Tested` (✅) for the milestone in the
-   `MILESTONES.md` table, and commit that change.
-5. **Stop and ask.** Unless the user has explicitly told you to run multiple
-   milestones (e.g. "do them all", "don't stop between milestones"), **halt here
-   and ask the user whether to continue to the next milestone or stop for now.**
-   Do not roll into `Mn+1` on your own.
+1. **Update `SPEC.md` first.** Clearly state the shift in logic where the change
+   is non-trivial, so the reasoning is captured, not just the new text.
+2. **Reconcile `MILESTONES.md`** if the change affects scope, ordering, or
+   acceptance criteria.
+3. **Commit** the spec change on its own (e.g. `spec: change X because Y`).
+4. **Only then** continue (or resume) implementation against the new spec.
 
-## The reviewer workflow
+Never let code drift ahead of the spec.
 
-A reviewer (model or human) goes through one or more milestones. For the
-milestones under review:
+## Step 4 — Hand off to execution
 
-- **If they pass:** tick the `Reviewed` column (✅) for each, and commit.
-- **If there are problems:** create a `REVIEW.md` at the repository root that
-  clearly describes each problem, where it is, and concrete guidance to fix it,
-  grouped by milestone. Leave `Reviewed` un-ticked for the affected milestones.
+Once `SPEC.md` and `MILESTONES.md` are committed:
 
-Then the coder addresses every item in `REVIEW.md`, committing fixes (referencing
-the milestone, e.g. `M3: fix N+1 query flagged in review`), and the reviewer
-re-checks. Iterate until clean.
+1. Tell the user the environment is ready and summarize the milestone plan.
+2. Instruct them (and yourself) to invoke the **`spec-exec`** skill to
+   begin building — that skill enforces the engineering rules and drives the
+   milestone-by-milestone loop. Explicit invocation is the most reliable handoff
+   across tools; do not start coding under this skill.
 
-- **Closing the review:** once all milestones under review pass and their
-  `Reviewed` columns are ticked, **delete `REVIEW.md`** (and commit its removal).
-  `REVIEW.md` exists only while there are open review findings; its absence means
-  there is nothing outstanding.
+## Assets
 
-## SPEC-change protocol
-
-If implementation reveals that `SPEC.md` must change, change the spec **first**:
-update `SPEC.md` (stating the shift in logic for non-trivial changes), reconcile
-`MILESTONES.md`, commit the spec change on its own, and only then resume coding.
-This mirrors the protocol owned by the `spec-env` skill.
-
-## Honesty and safety
-
-- Report outcomes faithfully: if tests fail, say so with the output; if a step
-  was skipped, say so.
-- Keep the repository buildable at every commit.
-- Never commit secrets, credentials, tokens, or keys.
+- `assets/SPEC.template.md` — skeleton for `SPEC.md`.
+- `assets/MILESTONES.template.md` — skeleton for `MILESTONES.md`, including the
+  Done/Tested/Reviewed tracking table.
