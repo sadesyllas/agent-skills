@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 # Install the skills in this repo into the skill directories of Claude Code,
-# OpenAI Codex, and Google Antigravity by symlinking each skill folder.
+# OpenAI Codex, Google Antigravity, and OpenCode by symlinking each skill folder.
 #
 #   pwsh ./install.ps1                       # global install (all tools, recommended)
 #   pwsh ./install.ps1 -Copy                 # copy instead of symlink (if links unavailable)
@@ -26,10 +26,11 @@ $skillsRoot = Join-Path $PSScriptRoot 'skills'
 $skills = Get-ChildItem -Path $skillsRoot -Directory
 
 if ($Project) {
-    # Project scope: .agents/skills (Codex + Antigravity workspace) and .claude/skills (Claude Code).
+    # Project scope: .agents/skills (Codex + Antigravity workspace), .opencode/skills (OpenCode), and .claude/skills (Claude Code).
     $projectRoot = (Resolve-Path $Project).Path
     $targets = @(
         (Join-Path $projectRoot '.agents/skills'),
+        (Join-Path $projectRoot '.opencode/skills'),
         (Join-Path $projectRoot '.claude/skills')
     )
     Write-Host "Installing into project: $projectRoot"
@@ -41,7 +42,8 @@ else {
         (Join-Path $HOME '.codex/skills'),                  # OpenAI Codex
         (Join-Path $HOME '.gemini/config/skills'),          # Antigravity IDE / 2.0
         (Join-Path $HOME '.gemini/antigravity-cli/skills'), # Antigravity CLI (global)
-        (Join-Path $HOME '.gemini/skills')                  # Antigravity (shared across tools)
+        (Join-Path $HOME '.gemini/skills'),                 # Antigravity (shared across tools)
+        (Join-Path $HOME '.config/opencode/skills')         # OpenCode
     )
 }
 

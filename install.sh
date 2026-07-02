@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install the skills in this repo into the skill directories of Claude Code,
-# OpenAI Codex, and Google Antigravity by symlinking each skill folder.
+# OpenAI Codex, Google Antigravity, and OpenCode by symlinking each skill folder.
 #
 #   ./install.sh                     # global install (all tools, recommended)
 #   ./install.sh --copy              # copy instead of symlink (if links unavailable)
@@ -26,9 +26,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -n "$project" ]]; then
-    # Project scope: .agents/skills (Codex + Antigravity workspace) and .claude/skills (Claude Code).
+    # Project scope: .agents/skills (Codex + Antigravity workspace), .opencode/skills (OpenCode), and .claude/skills (Claude Code).
     project_root="$(cd "$project" && pwd)"
-    targets=("$project_root/.agents/skills" "$project_root/.claude/skills")
+    targets=("$project_root/.agents/skills" "$project_root/.opencode/skills" "$project_root/.claude/skills")
     echo "Installing into project: $project_root"
 else
     # User-level (global) skill directories for each tool.
@@ -37,7 +37,8 @@ else
         "$HOME/.codex/skills"                   # OpenAI Codex
         "$HOME/.gemini/config/skills"           # Antigravity IDE / 2.0
         "$HOME/.gemini/antigravity-cli/skills"  # Antigravity CLI (global)
-        "$HOME/.gemini/skills"                   # Antigravity (shared across tools)
+        "$HOME/.gemini/skills"                  # Antigravity (shared across tools)
+        "$HOME/.config/opencode/skills"         # OpenCode
     )
 fi
 

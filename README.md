@@ -2,8 +2,8 @@
 
 Two portable [Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
 that establish a disciplined, spec-driven process for building software. They
-work across **Claude Code**, **OpenAI Codex**, and **Google Antigravity** —
-the skill format (`SKILL.md` + YAML frontmatter) is shared by all three; only
+work across **Claude Code**, **OpenAI Codex**, **Google Antigravity**, and **OpenCode** —
+the skill format (`SKILL.md` + YAML frontmatter) is shared by all of them; only
 the install location differs.
 
 ## The flow
@@ -59,6 +59,7 @@ pwsh ./install.ps1 -Copy      # copy instead, if symlinks are unavailable
 | Antigravity IDE / 2.0      | `~/.gemini/config/skills/`           |
 | Antigravity CLI (global)   | `~/.gemini/antigravity-cli/skills/`  |
 | Antigravity (shared)       | `~/.gemini/skills/`                  |
+| OpenCode                   | `~/.config/opencode/skills/`         |
 
 > **Antigravity caveat.** The IDE and the CLI currently read *different* global
 > skill directories and the layout is still being standardized (see
@@ -72,7 +73,7 @@ pwsh ./install.ps1 -Copy      # copy instead, if symlinks are unavailable
 ### Per-project install (most reliable)
 
 For a single project, install into its `.agents/skills/` (read natively by Codex
-and Antigravity workspaces) and `.claude/skills/` (Claude Code):
+and Antigravity workspaces), `.opencode/skills/` (OpenCode), and `.claude/skills/` (Claude Code):
 
 ```powershell
 pwsh ./install.ps1 -Project C:\path\to\repo
