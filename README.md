@@ -1,6 +1,6 @@
 # agent-skills
 
-Two portable [Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
+Portable [Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
 that establish a disciplined, spec-driven process for building software. They
 work across **Claude Code**, **OpenAI Codex**, **Google Antigravity**, and **OpenCode** —
 the skill format (`SKILL.md` + YAML frontmatter) is shared by all of them; only
@@ -9,20 +9,24 @@ the install location differs.
 ## The flow
 
 ```
-            ┌─────────────────────┐         ┌──────────────────────────┐
-  start ──▶ │  spec-environment   │ ──────▶ │   spec-exec     │ ──▶ ship
-            │  (the environment)  │ handoff │   (the execution)         │
-            └─────────────────────┘         └──────────────────────────┘
+            ┌───────────────────┐         ┌─────────────────┐
+  start ──▶ │     spec-env      │ ──────▶ │    spec-exec    │ ──▶ ship
+            │ (the environment) │ handoff │ (the execution) │
+            └───────────────────┘         └─────────────────┘
 ```
 
-1. **`spec-environment`** — runs once at project start. Interactively builds
+1. **`spec-env`** — runs once at project start. Interactively builds
    `SPEC.md` with you, derives an ordered `MILESTONES.md` with a
    Done/Tested/Reviewed tracking table, commits each, and hands off.
 2. **`spec-exec`** — the engineering compass for building. Implements
    milestones strictly in order, commits every meaningful task, gates each
-   milestone on Done + Tested, honors DRY and documentation rules, stops after
-   each milestone to ask whether to continue, and runs the reviewer / `REVIEW.md`
-   workflow.
+   milestone on Done + Tested, loads and enforces `code-quality`, stops
+   after each milestone to ask whether to continue, and runs the reviewer /
+   `REVIEW.md` workflow.
+3. **`code-quality`** — the workflow-independent code-quality rules
+   (document all types and public members, honor DRY, one top-level type per
+   file, idiomatic maintainable code). Not usually invoked directly — it is
+   loaded by skills that write code, like `spec-exec`.
 
 There is **no `AGENTS.md`** — the rules live inside the skills themselves. Skills
 load on demand rather than staying pinned to context, so `spec-exec`
@@ -84,7 +88,7 @@ pwsh ./install.ps1 -Project C:\path\to\repo
 
 ## Use
 
-- Starting a project: invoke **`spec-environment`** (e.g. ask the agent to "set
+- Starting a project: invoke **`spec-env`** (e.g. ask the agent to "set
   up the spec and milestones"). Build `SPEC.md` together, then let it generate
   `MILESTONES.md`.
 - Building: invoke **`spec-exec`** ("start building" / "implement the
@@ -97,15 +101,17 @@ pwsh ./install.ps1 -Project C:\path\to\repo
 
 ```
 skills/
-  spec-environment/          # SKILL 1 — bootstrap the environment
+  spec-env/                   # SKILL 1 — bootstrap the environment
     SKILL.md
     assets/
       SPEC.template.md
       MILESTONES.template.md
-  spec-exec/       # SKILL 2 — drive the build
+  spec-exec/                  # SKILL 2 — drive the build
     SKILL.md
     assets/
       REVIEW.template.md
-install.ps1                  # symlink/copy into all three tools (Windows)
-install.sh                   # symlink/copy into all three tools (POSIX)
+  code-quality/               # SKILL 3 — code-quality rules (loaded by spec-exec)
+    SKILL.md
+install.ps1                   # symlink/copy into all four tools (Windows)
+install.sh                    # symlink/copy into all four tools (POSIX)
 ```

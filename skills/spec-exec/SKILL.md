@@ -1,6 +1,6 @@
 ---
 name: spec-exec
-description: 'Drive disciplined, milestone-by-milestone implementation and review of a project that already has SPEC.md and MILESTONES.md. Use when the user says "start building", "implement the next milestone", "continue", "code this", or "review the milestones", and whenever writing or changing product code in a repo that has SPEC.md and MILESTONES.md. Enforces the engineering rules: conform to SPEC.md, follow milestones strictly in order, no untested code advances, commit at every step, document every public type and member, honor DRY, and keep SPEC.md authoritative. Stops after each milestone to ask the user before continuing, and runs the reviewer / REVIEW.md workflow.'
+description: 'Drive disciplined, milestone-by-milestone implementation and review of a project that already has SPEC.md and MILESTONES.md. Use when the user says "start building", "implement the next milestone", "continue", "code this", or "review the milestones", and whenever writing or changing product code in a repo that has SPEC.md and MILESTONES.md. Enforces the engineering rules: conform to SPEC.md, follow milestones strictly in order, no untested code advances, commit at every step, uphold the code-quality skill (documentation, DRY, one type per file), and keep SPEC.md authoritative. Stops after each milestone to ask the user before continuing, and runs the reviewer / REVIEW.md workflow.'
 ---
 
 # spec-exec — build the system, one milestone at a time
@@ -21,9 +21,12 @@ rules will not stay resident on their own. Before working on **each** milestone,
 re-anchor explicitly:
 
 1. Re-read `SPEC.md` and `MILESTONES.md`.
-2. State out loud which milestone you are starting and its acceptance criteria
+2. **Load the `code-quality` skill** so its rules (documentation, DRY, one
+   type per file, idiomatic code) are back in context.
+3. State out loud which milestone you are starting and its acceptance criteria
    and required tests.
-3. Restate the rules below as the active constraints for this milestone.
+4. Restate the rules below — and the `code-quality` rules — as the active
+   constraints for this milestone.
 
 Treat this as mandatory, not optional. It is the mechanism that replaces an
 always-in-context rules file.
@@ -55,21 +58,15 @@ always-in-context rules file.
    clear message that references its milestone (e.g. `M2: add rate-limiter
    middleware`), and leaves the repository buildable. Never commit secrets.
 
-6. **Document all types and public methods.** Every class, record, struct, enum,
-   interface, and every public method/property has a doc comment (e.g. `///` XML
-   docs in C#) that concisely explains what it does. This applies to production
-   code; test code is exempt. Document complex flows narratively too.
+6. **Apply the `code-quality` skill to all production code.** Load that
+   skill and treat its rules — document all types and public members, honor DRY
+   absolutely, one top-level type definition per file, uphold idiomatic
+   maintainable code — as mandatory constraints for every change made under
+   this skill. Reviewers check against them too.
 
-7. **Honor DRY absolutely.** Do not duplicate logic, boilerplate, or query
-   patterns across handlers, repositories, or tests. Abstract repetition into
-   reusable helpers, extension methods, or shared classes. Do not copy-paste
-   code blocks.
-
-8. **Keep `SPEC.md` up to date.** Any change to architecture, endpoints,
+7. **Keep `SPEC.md` up to date.** Any change to architecture, endpoints,
    validation, configuration, or core features is reflected in `SPEC.md`
    immediately and accurately. Never let code drift from the spec.
-
-9. **One top-level type definition per file.** For programming languages (eg, C#), each code file declares at most one top-level type (eg, `class`/`struct`/`record`/`interface`/`enum`); an interface and its implementation must not share a file, and the file name matches the type. Nested types, constructs like C#'s `partial` types across files, and top-level statements in program entry files (eg, `Program.cs`) are allowed; For C#, generated EF migration `*.Designer.cs`/snapshot and `obj/`/`bin/` are exempt. Where possible, there must be an automated architecture test to validate these rules.
 
 ## The milestone loop (coder)
 

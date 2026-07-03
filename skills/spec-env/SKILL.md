@@ -53,7 +53,9 @@ this skill as the skeleton.
 4. **DRY** — the absolute requirement to honor Don't-Repeat-Yourself; no
    duplicated logic, boilerplate, or query patterns.
 5. **Highest coding standards** — the requirement to uphold strong, idiomatic,
-   maintainable code.
+   maintainable code, as defined by the **`code-quality`** skill
+   (documentation, DRY, one top-level type per file); `spec-exec` loads and
+   enforces it during implementation.
 6. **Mandatory documentation** — documentation is required, especially for
    public APIs and complex flows.
 
