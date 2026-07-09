@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Install the skills in this repo into the skill directories of Claude Code,
-# OpenAI Codex, Google Antigravity, and OpenCode by symlinking each skill folder.
+# OpenAI Codex, Google Antigravity, OpenCode, Grok Build, and Cursor by symlinking
+# each skill folder.
 #
 #   ./install.sh                     # global install (all tools, recommended)
 #   ./install.sh --copy              # copy instead of symlink (if links unavailable)
-#   ./install.sh --project /path     # project install into /path/.agents/skills + .claude/skills
+#   ./install.sh --project /path     # project install into /path/.agents/skills + .grok/skills + .cursor/skills + ...
 #   ./install.sh --project /path --copy
 #
 # Antigravity note: the IDE and CLI currently read DIFFERENT global skill dirs and
@@ -26,9 +27,16 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -n "$project" ]]; then
-    # Project scope: .agents/skills (Codex + Antigravity workspace), .opencode/skills (OpenCode), and .claude/skills (Claude Code).
+    # Project scope: .agents/skills (shared/Codex/Antigravity), .grok/skills (Grok Build),
+    # .cursor/skills (Cursor), .opencode/skills (OpenCode), and .claude/skills (Claude Code).
     project_root="$(cd "$project" && pwd)"
-    targets=("$project_root/.agents/skills" "$project_root/.opencode/skills" "$project_root/.claude/skills")
+    targets=(
+        "$project_root/.agents/skills"
+        "$project_root/.grok/skills"
+        "$project_root/.cursor/skills"
+        "$project_root/.opencode/skills"
+        "$project_root/.claude/skills"
+    )
     echo "Installing into project: $project_root"
 else
     # User-level (global) skill directories for each tool.
@@ -38,6 +46,9 @@ else
         "$HOME/.gemini/config/skills"           # Antigravity IDE / 2.0
         "$HOME/.gemini/antigravity-cli/skills"  # Antigravity CLI (global)
         "$HOME/.gemini/skills"                  # Antigravity (shared across tools)
+        "$HOME/.grok/skills"                    # Grok Build
+        "$HOME/.cursor/skills"                  # Cursor
+        "$HOME/.agents/skills"                  # Cursor / shared agents (global)
         "$HOME/.config/opencode/skills"         # OpenCode
     )
 fi

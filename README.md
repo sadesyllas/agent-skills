@@ -2,9 +2,9 @@
 
 Portable [Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
 that establish a disciplined, spec-driven process for building software. They
-work across **Claude Code**, **OpenAI Codex**, **Google Antigravity**, and **OpenCode** —
-the skill format (`SKILL.md` + YAML frontmatter) is shared by all of them; only
-the install location differs.
+work across **Claude Code**, **OpenAI Codex**, **Google Antigravity**, **OpenCode**,
+**Grok Build**, and **Cursor** — the skill format (`SKILL.md` + YAML frontmatter)
+is shared by all of them; only the install location differs.
 
 ## The flow
 
@@ -37,7 +37,8 @@ compaction.
 ## Install
 
 Symlink the skills into each tool's user-level skills directory. After a
-`git pull`, every tool sees the update with no re-install.
+`git pull`, every supported tool (Claude Code, Codex, Antigravity, OpenCode,
+Grok Build, Cursor) sees the update with no re-install.
 
 ```powershell
 # Windows / PowerShell
@@ -51,6 +52,11 @@ pwsh ./install.ps1 -Copy      # copy instead, if symlinks are unavailable
 ./install.sh --copy           # copy instead
 ```
 
+> After installing for Grok Build or Cursor, the skills become available as
+> slash commands (e.g. `/spec-env`) and for automatic invocation when the
+> description matches the task. Grok and Cursor both discover skills in the
+> documented native paths plus compatibility locations.
+
 > **Windows symlinks** require Developer Mode (Settings → System → For
 > developers) or an elevated shell. If linking fails, re-run with `-Copy`.
 
@@ -63,6 +69,9 @@ pwsh ./install.ps1 -Copy      # copy instead, if symlinks are unavailable
 | Antigravity IDE / 2.0      | `~/.gemini/config/skills/`           |
 | Antigravity CLI (global)   | `~/.gemini/antigravity-cli/skills/`  |
 | Antigravity (shared)       | `~/.gemini/skills/`                  |
+| Grok Build                 | `~/.grok/skills/`                    |
+| Cursor                     | `~/.cursor/skills/`                  |
+| Cursor / shared agents     | `~/.agents/skills/`                  |
 | OpenCode                   | `~/.config/opencode/skills/`         |
 
 > **Antigravity caveat.** The IDE and the CLI currently read *different* global
@@ -76,8 +85,9 @@ pwsh ./install.ps1 -Copy      # copy instead, if symlinks are unavailable
 
 ### Per-project install (most reliable)
 
-For a single project, install into its `.agents/skills/` (read natively by Codex
-and Antigravity workspaces), `.opencode/skills/` (OpenCode), and `.claude/skills/` (Claude Code):
+For a single project, install into its `.agents/skills/` (shared, Codex,
+Antigravity), `.grok/skills/` (Grok Build), `.cursor/skills/` (Cursor),
+`.opencode/skills/` (OpenCode), and `.claude/skills/` (Claude Code):
 
 ```powershell
 pwsh ./install.ps1 -Project C:\path\to\repo
@@ -112,6 +122,6 @@ skills/
       REVIEW.template.md
   code-quality/               # SKILL 3 — code-quality rules (loaded by spec-exec)
     SKILL.md
-install.ps1                   # symlink/copy into all four tools (Windows)
-install.sh                    # symlink/copy into all four tools (POSIX)
+install.ps1                   # symlink/copy into supported tools (Windows)
+install.sh                    # symlink/copy into supported tools (POSIX)
 ```

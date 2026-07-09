@@ -1,10 +1,11 @@
 #!/usr/bin/env pwsh
 # Install the skills in this repo into the skill directories of Claude Code,
-# OpenAI Codex, Google Antigravity, and OpenCode by symlinking each skill folder.
+# OpenAI Codex, Google Antigravity, OpenCode, Grok Build, and Cursor by symlinking
+# each skill folder.
 #
 #   pwsh ./install.ps1                       # global install (all tools, recommended)
 #   pwsh ./install.ps1 -Copy                 # copy instead of symlink (if links unavailable)
-#   pwsh ./install.ps1 -Project C:\repo      # project install into <repo>\.agents\skills + .claude\skills
+#   pwsh ./install.ps1 -Project C:\repo      # project install into <repo>\.agents\skills + .grok\skills + .cursor\skills + ...
 #   pwsh ./install.ps1 -Project C:\repo -Copy
 #
 # Antigravity note: the IDE and CLI currently read DIFFERENT global skill dirs and
@@ -26,10 +27,13 @@ $skillsRoot = Join-Path $PSScriptRoot 'skills'
 $skills = Get-ChildItem -Path $skillsRoot -Directory
 
 if ($Project) {
-    # Project scope: .agents/skills (Codex + Antigravity workspace), .opencode/skills (OpenCode), and .claude/skills (Claude Code).
+    # Project scope: .agents/skills (shared/Codex/Antigravity), .grok/skills (Grok Build),
+    # .cursor/skills (Cursor), .opencode/skills (OpenCode), and .claude/skills (Claude Code).
     $projectRoot = (Resolve-Path $Project).Path
     $targets = @(
         (Join-Path $projectRoot '.agents/skills'),
+        (Join-Path $projectRoot '.grok/skills'),
+        (Join-Path $projectRoot '.cursor/skills'),
         (Join-Path $projectRoot '.opencode/skills'),
         (Join-Path $projectRoot '.claude/skills')
     )
@@ -43,6 +47,9 @@ else {
         (Join-Path $HOME '.gemini/config/skills'),          # Antigravity IDE / 2.0
         (Join-Path $HOME '.gemini/antigravity-cli/skills'), # Antigravity CLI (global)
         (Join-Path $HOME '.gemini/skills'),                 # Antigravity (shared across tools)
+        (Join-Path $HOME '.grok/skills'),                   # Grok Build
+        (Join-Path $HOME '.cursor/skills'),                 # Cursor
+        (Join-Path $HOME '.agents/skills'),                 # Cursor / shared agents (global)
         (Join-Path $HOME '.config/opencode/skills')         # OpenCode
     )
 }
