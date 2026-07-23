@@ -97,10 +97,17 @@ Then the coder addresses every item in `REVIEW.md`, committing fixes (referencin
 the milestone, e.g. `M3: fix N+1 query flagged in review`), and the reviewer
 re-checks. Iterate until clean.
 
-- **Closing the review:** once all milestones under review pass and their
-  `Reviewed` columns are ticked, **delete `REVIEW.md`** (and commit its removal).
-  `REVIEW.md` exists only while there are open review findings; its absence means
-  there is nothing outstanding.
+- **Reviewer ownership is absolute:** `REVIEW.md` is reviewer-owned. The coder
+  may read it and fix the code it identifies, but must **never** edit finding
+  statuses, mark findings resolved, tick the `Reviewed` column, delete
+  `REVIEW.md`, or commit its removal. Fixing the code does not resolve the review;
+  only reviewer verification does.
+- **Closing the review (reviewer only):** after re-checking the coder's fixes,
+  the reviewer marks findings resolved. Once all milestones under review pass
+  and their `Reviewed` columns are ticked, the reviewer **deletes `REVIEW.md`**
+  and commits its removal. `REVIEW.md` exists only while there are open review
+  findings; its absence means the reviewer confirmed that nothing is
+  outstanding.
 
 ## SPEC-change protocol
 

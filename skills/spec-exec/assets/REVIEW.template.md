@@ -2,7 +2,12 @@
 
 > This file exists **only while there are open review findings**. When every
 > milestone under review passes and its `Reviewed` column is ticked in
-> `MILESTONES.md`, delete this file and commit its removal.
+> `MILESTONES.md`, the reviewer deletes this file and commits its removal.
+>
+> **Reviewer-owned:** the coder may fix the referenced code, but must never edit
+> finding statuses, mark findings resolved, tick `Reviewed`, delete this file,
+> or commit its removal. Only the reviewer may perform those actions after
+> verifying the fixes.
 
 **Milestones under review:** <e.g. M0–M3>
 **Reviewer:** <name / model>
@@ -30,5 +35,5 @@
 
 ## M<n+1> — <milestone title>
 
-<Repeat per finding, grouped by milestone. Remove this file once all findings are
-resolved and the affected `Reviewed` columns are ticked.>
+<Repeat per finding, grouped by milestone. The reviewer removes this file once
+all findings are resolved and the affected `Reviewed` columns are ticked.>
