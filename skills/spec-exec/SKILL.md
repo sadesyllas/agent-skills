@@ -97,6 +97,19 @@ Then the coder addresses every item in `REVIEW.md`, committing fixes (referencin
 the milestone, e.g. `M3: fix N+1 query flagged in review`), and the reviewer
 re-checks. Iterate until clean.
 
+- **Repeated findings require better instructions:** if the reviewer sees the
+  same problem again after an attempted fix — whether at the original location
+  or as the same underlying pattern elsewhere — the reviewer must update that
+  finding in `REVIEW.md` before returning it to the coder. Do not merely leave
+  the old description and guidance in place. The updated finding must:
+  1. describe the remaining or recurring problem using current, specific
+     evidence;
+  2. explain why the attempted fix did not fully resolve the problem; and
+  3. replace or expand the guidance with clearer, ordered, verifiable steps that
+     say what must be changed, where else the same pattern must be checked, and
+     what result or test will demonstrate that the problem is resolved.
+  Each recurrence is a signal that the previous explanation was not actionable
+  enough. The reviewer owns making the next revision more precise.
 - **Reviewer ownership is absolute:** `REVIEW.md` is reviewer-owned. The coder
   may read it and fix the code it identifies, but must **never** edit finding
   statuses, mark findings resolved, tick the `Reviewed` column, delete
