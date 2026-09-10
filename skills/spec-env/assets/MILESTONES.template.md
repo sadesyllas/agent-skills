@@ -4,6 +4,13 @@
 > A milestone may begin only after the previous one is **Done** and **Tested**.
 > Status legend: ✅ achieved · ⬜ not yet.
 
+## Current work
+
+- **Milestone:** M0 — <title>
+- **Next action:** Implementer: <next action using spec-exec>
+- **Blocker:** None
+- **Verification:** Not run
+
 ## Tracking
 
 | #   | Milestone                | Done | Tested | Reviewed |
@@ -14,12 +21,14 @@
 | ... | ...                      |  ⬜  |   ⬜   |    ⬜    |
 
 - **Done** — implemented.
-- **Tested** — thorough tests written **and** passing.
-- **Reviewed** — a reviewer has gone through the changes and they passed review.
+- **Tested** — required verification passes.
+- **Reviewed** — changes passed review with `spec-review`.
 
 Advancing to the next milestone requires the current one to be **Done + Tested**.
-**Reviewed** is filled by the reviewer pass (see the `spec-exec` skill)
-and may legitimately lag behind implementation.
+The implementer maintains Done and Tested; the reviewer maintains Reviewed.
+Reviewed may lag when the user requests continued implementation. Ticks record
+completed passes; they do not certify later changes. Current work is a short,
+replaceable snapshot checked against `SPEC.md` and Git when resuming.
 
 ---
 

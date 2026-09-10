@@ -1,91 +1,55 @@
 # SPEC — <project name>
 
-> The single source of truth for this project. Code conforms to this document.
-> Any change to architecture, components, contracts, or behavior is reflected
-> here **first**, then committed, then implemented.
+> Current requirements and important design decisions. Change agreed requirements
+> here before affected implementation; Git records code and history. Progress
+> notes in MILESTONES.md do not override this specification.
 
-## 1. Purpose and structure
+<Draft from known information. Do not invent requirements. Ask about missing
+requirements, including possible omissions; do not finalize affected sections
+until answered. Omit sections only when established scope makes them irrelevant.
+Remove drafting instructions from the agreed document.>
 
-<What the project is for. The problem it solves. Who/what consumes it. The
-high-level structure: solution/repo layout, top-level projects or packages, and
-how they fit together.>
+## Purpose and scope
 
-## 2. Components
+<Problem, intended users, required outcomes, and explicit exclusions.>
 
-<Each module / service / project and its single responsibility. A short table or
-list. Note ownership boundaries and the public surface of each component.>
+## Structure and components
 
-| Component | Responsibility | Public surface |
-|-----------|----------------|----------------|
-|           |                |                |
+<Repository organization and component responsibilities. Use a short list or
+table. Record rationale beside important design decisions.>
 
-## 3. Dependencies
+## Dependencies
 
-<Runtimes, frameworks, and libraries with intended versions. Build and test
-tooling. Anything external the project pulls in. State why each non-trivial
-dependency is chosen.>
+<Runtimes, frameworks, libraries, and external tools with intended versions.
+Explain non-trivial choices; avoid duplicating dependency manifests.>
 
-## 4. Telemetry
+## System interactions
 
-<How observability is produced and emitted: logging (e.g. Serilog), tracing and
-metrics (e.g. OpenTelemetry), correlation IDs, log sinks/exporters, and the
-events/spans/metrics that matter. State the minimum telemetry every component
-must emit.>
+<Inbound and outbound interfaces, data contracts, storage, protocols, and
+required failure handling.>
 
-## 5. System interactions
+## Telemetry
 
-<How this software talks to other systems: inbound and outbound APIs, message
-buses/topics, databases and stores, third-party services. Protocols, data
-contracts/schemas, retry/idempotency expectations, and failure handling.>
+<Required logs, metrics, or traces and their destinations, as applicable.>
 
----
+## Authentication and authorization
 
-## Commitments
+<Required identity and access rules and enforcement. Record none required only
+when established scope or the user's answer supports that decision.>
 
-These are binding requirements for the implementation, not aspirations.
+## Performance
 
-### 6. Authentication & authorization
+<Agreed latency, throughput, concurrency, or resource targets and measurement.
+Ask if targets are missing; do not invent numeric commitments.>
 
-<What must be authenticated, what must be authorized, and how it is enforced
-(mechanisms, scopes/roles, token flow). State "none required" explicitly only if
-that is a deliberate decision.>
+## Verification
 
-### 7. Performance characteristics
+<Required test types and important behaviors, including failure cases. State
+what passing means and the commands or checks used. Milestones define their
+specific acceptance criteria and required tests.>
 
-<Required latency, throughput, concurrency, and resource limits. State the
-targets that must be met and how they will be measured.>
+## Engineering conventions
 
-### 8. Full testing coverage
-
-The system must be **thoroughly tested**. Define the required test types (unit,
-integration, contract, end-to-end as applicable), what "thorough" means for this
-project, and the gate: no untested code advances.
-
-### 9. DRY
-
-The DRY (Don't Repeat Yourself) principle is honored **absolutely**. No
-duplicated logic, boilerplate, or query patterns across handlers, repositories,
-or tests. Repeated logic is abstracted into reusable helpers, extensions, or
-shared classes.
-
-### 10. Coding standards
-
-The highest coding standards are upheld: idiomatic, readable, consistent,
-maintainable code that matches the conventions of the surrounding codebase.
-
-### 11. Documentation
-
-Documentation is **mandatory**, especially for public APIs and complex flows.
-<State the doc convention, e.g. XML doc comments on every public type and member;
-plus narrative docs for non-obvious flows.>
-
----
-
-## Change log
-
-<Append an entry whenever this spec changes: date, what changed, and — for
-non-trivial changes — the shift in logic and why.>
-
-| Date | Change | Reason / logic shift |
-|------|--------|----------------------|
-|      |        |                      |
+Apply the shared `code-quality` skill during implementation and review.
+<Record only project-specific coding, documentation, and testing conventions
+or explicit exceptions. Do not duplicate shared rules.>

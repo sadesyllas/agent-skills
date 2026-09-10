@@ -8,31 +8,36 @@ is shared by all of them; only the install location differs.
 
 ## The flow
 
-```
-            ┌───────────────────┐         ┌─────────────────┐
-  start ──▶ │     spec-env      │ ──────▶ │    spec-exec    │ ──▶ ship
-            │ (the environment) │ handoff │ (the execution) │
-            └───────────────────┘         └─────────────────┘
+```text
+spec-env → spec-exec → spec-review
+              ↑           │
+              └── fixes ──┘
 ```
 
-1. **`spec-env`** — runs once at project start. Interactively builds
-   `SPEC.md` with you, derives an ordered `MILESTONES.md` with a
-   Done/Tested/Reviewed tracking table, commits each, and hands off.
-2. **`spec-exec`** — the engineering compass for building. Implements
-   milestones strictly in order, commits every meaningful task, gates each
-   milestone on Done + Tested, loads and enforces `code-quality`, stops
-   after each milestone to ask whether to continue, and runs the reviewer /
-   `REVIEW.md` workflow.
-3. **`code-quality`** — the workflow-independent code-quality rules
-   (document all types and public members, honor DRY, one top-level type per
-   file, idiomatic maintainable code). Not usually invoked directly — it is
-   loaded by skills that write code, like `spec-exec`.
+| Skill | Responsibility |
+|-------|----------------|
+| `spec-env` | Establish agreed requirements and ordered milestones; ask about missing requirements. |
+| `spec-exec` | Implement, test, and fix findings; maintain Done and Tested. |
+| `spec-review` | Review changes and verify fixes; own REVIEW.md and Reviewed. |
+| `code-quality` | Shared coding standards, including mandatory DRY for production logic. |
 
-There is **no `AGENTS.md`** — the rules live inside the skills themselves. Skills
-load on demand rather than staying pinned to context, so `spec-exec`
-re-anchors at the start of every milestone (re-reads `SPEC.md`/`MILESTONES.md`
-and restates the rules) to stay reliable across long builds and context
-compaction.
+Roles hand off explicitly and stop at their boundary unless the user has asked
+for the next role too. After implementation, the agent says the milestone is
+ready for review. Asking for a review invokes `spec-review`; the implementer does
+not silently become the reviewer. No additional agents are launched unless asked.
+
+`SPEC.md` and Git are the sources of truth for requirements, implementation, and
+history. `MILESTONES.md` holds the plan, the existing Done/Tested/Reviewed table,
+and one short **Current work** block: Milestone, Next action, Blocker, Verification.
+Each role replaces stale values at meaningful changes and handoffs. New sessions
+check the block against the spec and actual code before resuming. `REVIEW.md`
+contains findings while review is open; its absence alone does not prove review
+occurred.
+
+There is **no `AGENTS.md`** — shared workflow rules live in the skills. Agents
+read relevant instructions and project state when starting or resuming, and
+report actions and results without reciting the rules. Git retains history;
+project documents describe the current state.
 
 ## Install
 
@@ -99,28 +104,34 @@ pwsh ./install.ps1 -Project C:\path\to\repo
 ## Use
 
 - Starting a project: invoke **`spec-env`** (e.g. ask the agent to "set
-  up the spec and milestones"). Build `SPEC.md` together, then let it generate
-  `MILESTONES.md`.
+  up the spec and milestones"). Agree on `SPEC.md`, then derive `MILESTONES.md`.
+  Missing planning files alone do not require this workflow for routine fixes.
 - Building: invoke **`spec-exec`** ("start building" / "implement the
-  next milestone"). It implements one milestone, then stops and asks before the
-  next — unless you tell it to run several.
-- Reviewing: ask it to "review the milestones". Findings go to `REVIEW.md`,
-  which is deleted once everything under review passes and `Reviewed` is ticked.
+  next milestone"). It implements and tests one milestone, then hands off to
+  review — unless you tell it to continue implementation across several.
+- Reviewing: invoke **`spec-review`** or ask to "review the milestones".
+  Findings go to `REVIEW.md`; fixes return to `spec-exec`. Ask for re-review
+  when fixes are ready. Only the reviewer verifies closure and removes the file
+  after all its findings are resolved and affected milestones pass review.
+- Changing roles: explicitly request a combined workflow if desired, such as
+  "implement M1, then review it". Otherwise each role stops at its handoff.
 
 ## Repository layout
 
 ```
 skills/
-  spec-env/                   # SKILL 1 — bootstrap the environment
+  spec-env/                   # requirements and milestone planning
     SKILL.md
     assets/
       SPEC.template.md
       MILESTONES.template.md
-  spec-exec/                  # SKILL 2 — drive the build
+  spec-exec/                  # implementation, tests, and fixes
+    SKILL.md
+  spec-review/                # review and verification of fixes
     SKILL.md
     assets/
       REVIEW.template.md
-  code-quality/               # SKILL 3 — code-quality rules (loaded by spec-exec)
+  code-quality/               # shared implementation and review standards
     SKILL.md
 install.ps1                   # symlink/copy into supported tools (Windows)
 install.sh                    # symlink/copy into supported tools (POSIX)
