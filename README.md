@@ -19,12 +19,15 @@ spec-env → spec-exec → spec-review
 | `spec-env` | Establish agreed requirements and ordered milestones; ask about missing requirements. |
 | `spec-exec` | Implement, test, and fix findings; maintain Done and Tested. |
 | `spec-review` | Review changes and verify fixes; own REVIEW.md and Reviewed. |
+| `spec-iterate` | Manually orchestrate sequential implementer and reviewer sub-agents across selected milestones. |
 | `code-quality` | Shared coding standards, including mandatory DRY for production logic. |
 
 Roles hand off explicitly and stop at their boundary unless the user has asked
 for the next role too. After implementation, the agent says the milestone is
 ready for review. Asking for a review invokes `spec-review`; the implementer does
 not silently become the reviewer. No additional agents are launched unless asked.
+Explicitly invoking `spec-iterate` requests that orchestration: after planning,
+it delegates each implementation and review step for one milestone at a time.
 
 `SPEC.md` and Git are the sources of truth for requirements, implementation, and
 history. `MILESTONES.md` holds the plan, the existing Done/Tested/Reviewed table,
@@ -61,6 +64,8 @@ pwsh ./install.ps1 -Copy      # copy instead, if symlinks are unavailable
 > slash commands (e.g. `/spec-env`) and for automatic invocation when the
 > description matches the task. Grok and Cursor both discover skills in the
 > documented native paths plus compatibility locations.
+> `spec-iterate` is manual-only; its instructions require explicit invocation,
+> and its Codex metadata disables implicit invocation.
 
 > **Windows symlinks** require Developer Mode (Settings → System → For
 > developers) or an elevated shell. If linking fails, re-run with `-Copy`.
@@ -115,6 +120,16 @@ pwsh ./install.ps1 -Project C:\path\to\repo
   after all its findings are resolved and affected milestones pass review.
 - Changing roles: explicitly request a combined workflow if desired, such as
   "implement M1, then review it". Otherwise each role stops at its handoff.
+- Iterating: explicitly invoke **`spec-iterate`** after `spec-env` has established
+  the planning artifacts. It checks current progress through a read-only agent,
+  asks separately for implementer and reviewer models and thinking efforts, then
+  asks for **All** remaining milestones or a specific inclusive range. It uses
+  one sub-agent at a time and completes implementation and review of each
+  milestone before advancing. Steps use fresh agents and pass workflow context
+  through the project Markdown artifacts. If the initial implementation and
+  first fix both fail review, the latest reviewer continues with `spec-exec` to
+  fix the milestone, and a fresh reviewer verifies the result. This requires a
+  host with sub-agent model/effort selection.
 
 ## Repository layout
 
@@ -131,6 +146,10 @@ skills/
     SKILL.md
     assets/
       REVIEW.template.md
+  spec-iterate/               # manual orchestration of sequential sub-agents
+    SKILL.md
+    agents/
+      openai.yaml             # disables implicit invocation in Codex
   code-quality/               # shared implementation and review standards
     SKILL.md
 install.ps1                   # symlink/copy into supported tools (Windows)
