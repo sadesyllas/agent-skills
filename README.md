@@ -124,9 +124,11 @@ pwsh ./install.ps1 -Project C:\path\to\repo
   the planning artifacts. It checks current progress through a read-only agent,
   asks separately for implementer and reviewer models and thinking efforts, then
   asks for **All** remaining milestones or a specific inclusive range. It uses
-  one sub-agent at a time and completes implementation and review of each
-  milestone before advancing. Steps use fresh agents and pass workflow context
-  through the project Markdown artifacts. If the initial implementation and
+  one sub-agent executing at a time and completes implementation and review of
+  each milestone before advancing. Each milestone uses a fresh implementer and
+  separate reviewer, reused within that milestone's implementation, review, and
+  fix cycles; each assignment checks the current project artifacts and code.
+  Workers are never reused across milestones. If the initial implementation and
   first fix both fail review, the latest reviewer continues with `spec-exec` to
   fix the milestone, and a fresh reviewer verifies the result. This requires a
   host with sub-agent model/effort selection.

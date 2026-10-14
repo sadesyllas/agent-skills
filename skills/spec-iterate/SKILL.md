@@ -75,30 +75,39 @@ then begin; this summary is not another approval gate.
 
 ## 3. Dispatch exactly one milestone and one worker at a time
 
-Keep at most one sub-agent active. Await its completion before any next step;
-do not pipeline implementation, review, or different milestones. Spawn a fresh
-sub-agent with fresh context for each step, using the selected model and effort
-for its role. Do not fork conversation history, even when two workers use the
-same model. Where the host exposes `fork_turns`, use `"none"`. Never silently
-inherit the wrong model or effort.
+Keep at most one sub-agent executing a step. Await its completion before any
+next step; do not pipeline implementation, review, or different milestones.
+Use a fresh implementer and a fresh, separate reviewer for each milestone,
+creating each worker when its role is first needed. Prefer reusing that pair
+through follow-up assignments for implementation, review, fixes, re-review, and
+handoff repairs within that milestone only. Keep idle workers available between
+those assignments; never assign them to another milestone. The parent may spawn
+a replacement when a worker is unavailable or fresh context would help, subject
+to the takeover rules below. Use the selected model and effort for each role.
+New workers start without forked conversation history; where the host exposes
+`fork_turns`, use `"none"`. Never silently inherit the wrong model or effort.
 
 Use one shared project checkout so each step sees the preceding step's files
 and commits. Preserve unrelated user changes. Workers must return at their
 assigned handoff even though the parent has a larger milestone selection.
-Transfer workflow context between steps only through `SPEC.md`, `MILESTONES.md`,
-and `REVIEW.md`. Do not forward previous worker messages or conversational
-summaries. Each worker reads these artifacts and checks the actual code and Git
-state as its assigned skill requires. The parent supplies the assignment and
-paths, not a substitute narrative of the preceding work.
+Use `SPEC.md`, `MILESTONES.md`, and `REVIEW.md` for handoffs between roles. Reused
+workers may retain their own context, but must read the current artifacts and
+check actual code and Git state on each assignment as their assigned skill
+requires. Retained context does not replace current evidence. Load the role's
+skills and dependencies initially; re-read relevant instructions when they
+change or context is lost. Do not forward another worker's messages or
+conversational summaries. The parent supplies the assignment and paths, not a
+substitute narrative of the preceding work. Never assign review of changes to
+an agent that implemented them.
 
 For the current milestone, route using verified state:
 
 | State | Next step |
 |-------|-----------|
-| Implementation or required verification incomplete | Fresh implementer using `spec-exec`, for this milestone only. |
-| Done and Tested; review due, absent, or invalidated | Fresh reviewer using `spec-review`, for this whole milestone. |
-| Open findings awaiting fixes | Fresh implementer using `spec-exec`, fixing this milestone's findings. |
-| Fixes implemented and tested; re-review due | Fresh reviewer using `spec-review`, verifying fixes and the whole milestone. |
+| Implementation or required verification incomplete | Implementer using `spec-exec`, for this milestone only. |
+| Done and Tested; review due, absent, or invalidated | Separate reviewer using `spec-review`, for this whole milestone. |
+| Open findings awaiting fixes | Implementer using `spec-exec`, fixing this milestone's findings. |
+| Fixes implemented and tested; re-review due | Separate reviewer using `spec-review`, verifying fixes and the whole milestone. |
 | Current implementation, verification, and review all pass | Advance to the next selected milestone. |
 
 Open findings with a verified fix handoff take the re-review route; the mere
@@ -108,36 +117,38 @@ delegate a read-only state check before dispatching a mutating step.
 
 After every worker returns, use its outcome to route the next step, and require
 it to leave the workflow artifacts ready for the next worker. Reports are for
-the parent and user; do not forward them as worker context. Each new worker
-reads the artifacts and actual code independently. If an artifact handoff is
-incomplete, use a fresh worker of the responsible role to repair it, with a
-read-only state check first if needed. Do not resume the previous worker for
-this; only the takeover below permits reuse.
+the parent and user; do not forward them between workers. Each worker checks
+the current artifacts and actual code independently of the other role's report.
+If an artifact handoff is incomplete, assign a repair to the responsible role,
+preferably continuing with the same worker, with a read-only state check first
+if needed. A repair alone does not reset or increment the failure counter.
 
 Advance only after this milestone is Done, Tested, and Reviewed for the current
 changes, with no unresolved findings for it. `REVIEW.md` may
-remain for other milestones. This orchestration completes each milestone's
-review before starting the next selected milestone.
+remain for other milestones. Retire this milestone's workers, including any
+takeover or replacement workers, before starting the next selected milestone
+with a new pair. Carry project state forward through the artifacts and checkout.
 
 ## 4. Escalate after two unsuccessful attempts
 
 Track consecutive failed **implementation attempts per milestone** in the
 parent's orchestration context. The initial implementation counts: its first
-review with actionable findings establishes failure 1. A fresh implementer
-then fixes the findings; if a fresh reviewer still finds actionable issues,
+review with actionable findings establishes failure 1. The implementer
+then fixes the findings; if the reviewer still finds actionable issues,
 that establishes failure 2. Count only distinct implementation/fix attempts
 followed by review, not repeated inspections of the same unchanged code. A
 missing check, interruption, or unresolved requirement is a blocker, not a
-failed implementation attempt.
+failed implementation attempt. Reusing or replacing a worker does not reset
+the milestone's counter.
 
-After failure 1, spawn a fresh implementer for the first fix step, then a fresh
-reviewer. After **failure 2**:
+After failure 1, assign the first fix step to the implementer, then re-review
+to the separate reviewer; both may be reused. After **failure 2**:
 
 1. Retain the reviewer sub-agent that just reported the second failure. Once
    its review turn has finished, explicitly instruct that same agent to switch
    to the implementation role, load `spec-exec`, and fix this milestone's
-   findings. Keep its reviewer-selected model and effort; reusing its context
-   here is the sole exception to the fresh-agent rule.
+   findings. Keep its reviewer-selected model and effort. This is the explicit
+   exception to the usual separation of implementation and review roles.
 2. Under `spec-exec`, that agent owns implementation and verification only. It
    must not edit/close findings, change Reviewed, or delete `REVIEW.md` while
    implementing, even though it previously acted as reviewer.
@@ -145,9 +156,9 @@ reviewer. After **failure 2**:
    the reviewer settings and `spec-review` to independently verify the results.
    The agent that made the fixes must not approve them.
 
-For example: fresh initial implementer → fresh review with findings (failure 1)
-→ fresh implementer fixing findings → fresh review with findings (failure 2)
-→ that reviewer switches to `spec-exec` → fresh independent `spec-review`.
+For example: implementer → reviewer finds issues (failure 1) → same implementer
+fixes findings → same reviewer finds issues (failure 2) → that reviewer switches
+to `spec-exec` → new independent reviewer using `spec-review`.
 
 If the independent review still finds issues after the takeover, stop this
 milestone and report the remaining findings for user direction; do not loop
@@ -170,8 +181,9 @@ Include in each implementation/review dispatch:
 - Exactly one milestone ID and the assigned action. Direct the worker to that
   milestone's scope, acceptance criteria, and required verification in the
   planning artifacts; do not give it the whole selected range as an assignment.
-- Explicit instruction to load `spec-exec` for implementation (including
-  takeover fixes), or `spec-review` for review. Load their dependencies too.
+- Explicit instruction to use `spec-exec` for implementation (including
+  takeover fixes), or `spec-review` for review, with their dependencies. Load
+  them initially and re-read when instructions change or context is lost.
 - Instruction to read this milestone's findings in `REVIEW.md` and the handoff,
   verification, and blockers in Current work, checking actual code and Git.
   Do not paste prior agents' findings or results into the prompt. Review scope
@@ -194,9 +206,11 @@ is ready and the selection remains valid. Report unavailable verification or
 other blockers without marking completion or repeatedly spawning workers.
 
 On interruption, retain the selections, active milestone/role, failed-attempt
-count, and last worker identity/outcome in the conversation handoff. Ensure the active
-worker has stopped before replacing it. Have it leave Current work accurate
-when possible; recheck actual artifacts through a sub-agent on resumption.
+count, implementer and reviewer identities and their assigned milestone, any
+takeover role change, and last worker outcome in the conversation handoff.
+Resume retained workers only for that same milestone. Ensure the active worker
+has stopped before replacing it. Have it leave Current work accurate when
+possible; recheck actual artifacts through a sub-agent on resumption.
 
 When the selected queue passes, summarize milestones completed, verification,
 remaining work outside the range, and any limitations. Completion of the range
