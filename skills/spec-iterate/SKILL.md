@@ -32,15 +32,16 @@ dependency skill paths. Have it read those skills and inspect:
   criteria, required verification, Done / Tested / Reviewed, and Current work.
 - Any `REVIEW.md`, mapping findings to milestones and distinguishing unresolved
   findings awaiting fixes from fixes already handed back for verification.
-- Actual files and Git state/history to check stale progress notes, later
-  changes to reviewed work, and evidence of previous implementation/review attempts.
+- Actual files and Git state/history, including the current and default branches,
+  to check stale progress notes, later changes to reviewed work, and evidence of
+  previous implementation/review attempts.
 - Any existing iteration decision ledger, including decisions awaiting user
   review and agreed amendments still requiring work.
 
-Request a compact report of artifact readiness, milestone order and state,
-pending findings, next role per unfinished milestone, blockers, and supporting
-file/commit references. Inspection is not a review pass and must not change
-files or mark any status. Wait for it to finish before proceeding.
+Request a compact report of branch status, artifact readiness, milestone order
+and state, pending findings, next role per unfinished milestone, blockers, and
+supporting file/commit references. Inspection is not a review pass and must not
+change files or mark any status. Wait for it to finish before proceeding.
 
 If either planning artifact is missing, or affected planning is incomplete or
 unagreed, report that `spec-iterate` cannot run and identify what must first be
@@ -88,6 +89,17 @@ and proceed to the completion, decision-review, and requested wrap-up gates.
 
 State the resolved milestone queue, both model/effort pairs, interaction mode,
 and starting role, then begin; this summary is not another approval gate.
+
+## Set up the working branch
+
+After read-only preflight and before the first file edit or commit, delegate a
+branch check in the shared checkout. Apply the
+[`spec-env` working branch rule](../spec-env/SKILL.md#choose-the-working-branch):
+if the checkout is on the default branch, have the sub-agent create and switch
+to a new task branch unless the user explicitly directs you to stay on the
+default branch. Use the resulting branch for all worker assignments, including
+ledger edits, planning updates, and wrap-up cleanup. Recheck the branch before
+resuming writes after an interruption or checkout change.
 
 ## Non-interactive decisions and ledger
 

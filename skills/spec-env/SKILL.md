@@ -9,6 +9,16 @@ Own requirements and milestone planning. Implementation belongs to `spec-exec`;
 code review belongs to `spec-review`. Do not switch roles or launch another agent
 unless the user asks. Follow explicit user changes to these role boundaries.
 
+## Choose the working branch
+
+Before editing planning files, check the current branch and identify the
+repository's default branch from Git metadata, such as the primary remote's
+symbolic `HEAD`. If the default is unknown, treat conventional names such as
+`main`, `master`, and `trunk` as defaults. When on the default branch, create
+and switch to a new task branch unless the user explicitly directs you to stay
+on the default branch. If Git needs initialization, treat the initial branch as
+the default and apply the rule before the first commit.
+
 ## Establish the specification
 
 1. Read the request, existing project documents, and relevant code and Git state.
