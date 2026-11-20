@@ -123,7 +123,9 @@ pwsh ./install.ps1 -Project C:\path\to\repo
 - Iterating: explicitly invoke **`spec-iterate`** after `spec-env` has established
   the planning artifacts. It checks current progress through a read-only agent,
   asks separately for implementer and reviewer models and thinking efforts, then
-  asks for **All** remaining milestones or a specific inclusive range. It uses
+  asks for **All** remaining milestones or a specific inclusive range and whether
+  to run in **non-interactive mode**. Explicit **non-interactive**, **silent**, or
+  **afk** instructions select that mode without another question. It uses
   one sub-agent executing at a time and completes implementation and review of
   each milestone before advancing. Each milestone uses a fresh implementer and
   separate reviewer, reused within that milestone's implementation, review, and
@@ -131,7 +133,15 @@ pwsh ./install.ps1 -Project C:\path\to\repo
   Workers are never reused across milestones. If the initial implementation and
   first fix both fail review, the latest reviewer continues with `spec-exec` to
   fix the milestone, and a fresh reviewer verifies the result. This requires a
-  host with sub-agent model/effort selection.
+  host with sub-agent model/effort selection. In non-interactive mode, it makes
+  subsequent execution decisions without asking, records them in `DECISIONS.md`,
+  and presents them for user review after the last selected milestone passes.
+  That review can lead to agreed amendment milestones. Initial specification
+  and milestone planning still require the usual discussion and agreement.
+  When explicitly asked to wrap up, it removes `SPEC.md` and `MILESTONES.md` only
+  after all planned work and review pass, `REVIEW.md` is absent, and any
+  non-interactive decisions and requested amendments have been reviewed and
+  resolved. The decision ledger is retained unless its removal is also requested.
 
 ## Repository layout
 
