@@ -16,9 +16,9 @@ Honor [spec-env](../spec-env/SKILL.md) for planning and artifact semantics,
 [spec-exec](../spec-exec/SKILL.md) for every implementation step, and
 [spec-review](../spec-review/SKILL.md) for every review step. These skills retain
 their ownership rules, including their dependency on
-[code-quality](../code-quality/SKILL.md). The non-interactive decision protocol
-below is an explicit exception to their instructions to ask the user during an
-iteration; it does not change initial planning or role ownership.
+[code-quality](../code-quality/SKILL.md). Non-interactive mode delegates
+decisions within agreed milestone scope to the parent. The user retains the
+scope decisions described below in every mode.
 
 ## 1. Establish the starting state
 
@@ -67,8 +67,8 @@ suggested starting role. Ask which milestones to cover, offering **All** or
 **A specific range**. All means all remaining work in the existing plan; a
 specific range requires explicit inclusive milestone IDs (a single ID is valid).
 Also ask whether to run these milestones in **non-interactive mode**, explaining
-that the coordinator will decide subsequent questions, keep a Markdown decision
-ledger, and present it for user review after the last selected milestone passes.
+that the coordinator will decide questions within agreed scope, keep a Markdown
+decision ledger, and present it for user review after the last selected milestone passes.
 These two questions may be presented together. An explicit instruction to run
 the iteration in **non-interactive**, **silent**, or **afk** mode already answers
 the mode question yes; do not ask it again. An explicit no selects interactive
@@ -78,9 +78,9 @@ The mode applies after execution setup; it does not supply missing model/effort
 or milestone choices, or bypass discussions and agreement needed to establish
 `SPEC.md` and `MILESTONES.md` through `spec-env`.
 
-Resolve the selection in the plan's order. Skip milestones whose Done, Tested,
-and Reviewed remain valid for the current code. A review tick invalidated by
-later changes or unresolved findings does not make a milestone complete.
+Resolve the selection in the plan's order. Skip milestones that have already
+passed review. Route later changes and findings about their work through the
+scope-change rules below.
 Preserve review work outside the selection. Do not silently widen the range to
 include prerequisites: if earlier unfinished work blocks the range under
 `spec-env`, explain and ask for an adjusted selection or explicit order change
@@ -101,24 +101,37 @@ default branch. Use the resulting branch for all worker assignments, including
 ledger edits, planning updates, and wrap-up cleanup. Recheck the branch before
 resuming writes after an interruption or checkout change.
 
+## Handle changes to milestone scope
+
+Workers report proposed changes outside their assigned scope before editing.
+Plan new scope in a new milestone by default. Fixes needed to satisfy an
+unreviewed milestone's existing criteria stay in that milestone, including
+fixes from a failed review.
+
+- Once a milestone has passed review, preserve its definition and status.
+  Create a new milestone for any new change to its reviewed work.
+- If the affected current milestone has yet to pass review, ask the user whether
+  to include the change there or create a new milestone. Wait for their answer
+  before changing the plan or dispatching the affected work, even in
+  non-interactive mode. Honor a choice the user has already made.
+- Only an explicit user instruction to make the specific change outside the
+  milestone plan authorizes ad hoc work. In that case, give it separate
+  implementation and review assignments identified by the user's request.
+  Preserve existing milestone definitions and status.
+
+Delegate agreed planning updates to a separate `spec-env` assignment under
+[Change an established specification](../spec-env/SKILL.md#change-an-established-specification)
+while milestone workers are paused. A new milestone enters the execution queue
+only when the user includes it in the selection, even if they originally selected All.
+
 ## Non-interactive decisions and ledger
 
 In interactive mode, surface questions and await required user answers as usual.
-In non-interactive mode, the parent decides subsequent execution questions on
-the user's behalf without asking. Workers return ambiguities and proposed scope
-changes to the parent rather than contacting the user. Choose using the agreed
-goal, constraints, current artifacts, and available evidence. This includes
-questions that `spec-exec`, `spec-review`, or the established-specification
-change protocol in `spec-env` would normally send to the user. Delegate any
-necessary planning updates through that protocol before affected work, recording
-the parent's decision as the basis; do not let workers silently invent scope.
-Use a separate explicit `spec-env` planning-update assignment while milestone
-workers are paused; resume their assigned roles only after planning is ready.
-This authority covers decisions within the iteration's agreed goal, not new
-unrelated requirements or missing initial planning agreement.
-Record any necessary queue adjustments that preserve the selected scope. If a
-change requires work outside that scope, stop with a recorded blocker instead
-of silently broadening the selection.
+In non-interactive mode, workers send questions to the parent. For decisions
+within agreed scope, the parent uses the agreed goal, constraints, project
+artifacts, and available evidence. For a proposed scope change, follow the
+milestone rules above. A coordinator decision or ledger entry cannot authorize
+an amendment or ad hoc work.
 
 Keep a persistent Markdown ledger at `DECISIONS.md` in the project root, or an
 existing user-designated ledger path. Have a worker initialize it before
@@ -136,7 +149,8 @@ decisions; it does not replace the authoritative specification or review evidenc
 Non-interactive mode does not waive required checks, independent review, the
 failure/takeover limits below, or actual tool/permission limits. If no authorized
 decision can unblock progress, record the blocker in the ledger and Current
-work, stop affected work, and report it without prompting for a mid-run answer.
+work and stop affected work. Ask mid-run when the milestone rules require the
+user's choice. Otherwise report the blocker without prompting.
 
 ## 3. Dispatch exactly one milestone and one worker at a time
 
@@ -165,12 +179,12 @@ conversational summaries. The parent supplies the assignment and paths, not a
 substitute narrative of the preceding work. Never assign review of changes to
 an agent that implemented them.
 
-For the current milestone, route using verified state:
+For a milestone that has yet to pass review, route using verified state:
 
 | State | Next step |
 |-------|-----------|
 | Implementation or required verification incomplete | Implementer using `spec-exec`, for this milestone only. |
-| Done and Tested; review due, absent, or invalidated | Separate reviewer using `spec-review`, for this whole milestone. |
+| Done and Tested, awaiting review | Separate reviewer using `spec-review`, for this whole milestone. |
 | Open findings awaiting fixes | Implementer using `spec-exec`, fixing this milestone's findings. |
 | Fixes implemented and tested; re-review due | Separate reviewer using `spec-review`, verifying fixes and the whole milestone. |
 | Current implementation, verification, and review all pass | Advance to the next selected milestone. |
@@ -249,22 +263,23 @@ continuation.
 Include in each implementation/review dispatch:
 
 - Project checkout and resolved paths to the required skills and artifacts.
-- Exactly one milestone ID and the assigned action. Direct the worker to that
-  milestone's scope, acceptance criteria, and required verification in the
-  planning artifacts; do not give it the whole selected range as an assignment.
+- For milestone work, exactly one milestone ID and its assigned action, scope,
+  acceptance criteria, and required verification in the planning artifacts. For
+  explicitly authorized ad hoc work, supply the user's specific instruction
+  and the checks for that change in place of a milestone ID and criteria.
 - Explicit instruction to use `spec-exec` for implementation (including
   takeover fixes), or `spec-review` for review, with their dependencies. Load
   them initially and re-read when instructions change or context is lost.
-- Instruction to read this milestone's findings in `REVIEW.md` and the handoff,
+- Instruction to read the assigned change's findings in `REVIEW.md` and the handoff,
   verification, and blockers in Current work, checking actual code and Git.
-  Do not paste prior agents' findings or results into the prompt. Review scope
-  remains the whole milestone even when verifying particular fixes.
+  Do not paste prior agents' findings or results into the prompt. For milestone
+  work, review the whole milestone even when verifying particular fixes.
 - Authorization for this single role only; no nested agents, self-review,
   automatic role switch, or work on the next milestone. The takeover is a
   separate explicit follow-up from the parent after the review turn ends.
 - Instruction to maintain Current work and role-owned artifacts/commits as the
   assigned skill requires, preserving findings and progress outside this scope.
-- Required return: milestone, role, outcome (ready for review / findings remain /
+- Required return: milestone or ad hoc change, role, outcome (ready for review / findings remain /
   passed / blocked), files and commits, checks and results, remaining finding
   IDs, and the next action. Report new ambiguity or scope changes to the parent.
 - Interaction mode and, for non-interactive runs, the ledger path. Return
@@ -273,11 +288,9 @@ Include in each implementation/review dispatch:
 
 ## Stop and report
 
-Route worker questions through the interaction-mode protocol. If a spec change
-is needed, stop affected work for the `spec-env` change protocol, using the
-user's answer in interactive mode or the parent's recorded decision in
-non-interactive mode. Resume only when planning is ready and the selection
-remains valid. Report unavailable verification or other blockers without marking
+Route worker questions through the scope-change and interaction-mode rules.
+Resume affected milestone work when planning is ready and the selection remains
+valid. Report unavailable verification or other blockers without marking
 completion or repeatedly spawning workers.
 
 On interruption, retain the selections, active milestone/role, failed-attempt
@@ -305,13 +318,12 @@ autonomous execution; do not silently accept decisions, infer acceptance from
 silence, or treat the code review as decision review.
 
 Record the user's feedback and which decisions they reviewed. Discuss any
-requested amendments, using `spec-env` to agree specification changes and add
-or adjust milestones before resuming execution. Obtain the amended selection
-without re-asking unchanged model or mode choices. This post-run discussion is
-interactive; autonomous execution resumes after the amended plan and selection
-are agreed. Track amendment resolution separately from decision-review status.
-Implement and independently review those milestones using the same iteration
-rules, then present any new or changed autonomous decisions for user review.
+requested amendments using the same scope-change rules. When adding a new
+milestone, obtain the amended selection without re-asking unchanged model or
+mode choices. This post-run discussion is interactive. Resume autonomous
+execution within the agreed scope. Track amendment resolution separately from
+decision-review status. Implement and independently review amendments using the
+same iteration rules, then present any new or changed autonomous decisions for user review.
 Keep planning artifacts until this checkpoint and any agreed amendment work
 are complete.
 
@@ -323,8 +335,8 @@ Otherwise retain the artifacts when reporting completion.
 
 Have a sub-agent verify current files, code, and review evidence before cleanup:
 
-- All planned milestones, including agreed amendments, are Done, Tested, and
-  successfully Reviewed for the current changes. Completing a selected range
+- All planned milestones, including follow-ups, are Done, Tested, and
+  successfully Reviewed for their agreed scope. Completing a selected range
   with unfinished work elsewhere does not qualify.
 - `REVIEW.md` is already absent because review has successfully completed.
   If it remains, return it to `spec-review` for proper resolution; never delete

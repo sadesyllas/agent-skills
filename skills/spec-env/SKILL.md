@@ -5,9 +5,11 @@ description: 'Establish requirements and ordered milestones when the user reques
 
 # spec-env — plan the work
 
-Own requirements and milestone planning. Implementation belongs to `spec-exec`;
-code review belongs to `spec-review`. Do not switch roles or launch another agent
-unless the user asks. Follow explicit user changes to these role boundaries.
+Own requirements and milestone planning. Implementation may begin only when
+the user explicitly invokes `spec-exec` or `spec-iterate` by name for that work.
+This applies equally to direct edits and delegated implementation. Plan approval
+or a generic request to continue or build leaves you in the planning role.
+Code review belongs to `spec-review`. Launch another agent only when requested.
 
 ## Choose the working branch
 
@@ -76,22 +78,34 @@ Commit `MILESTONES.md` separately after checking it against the agreed spec.
 
 ## Change an established specification
 
-When the user requests a requirement change, or implementation or review reveals
-a conflict, resolve any missing input with the user first. Update `SPEC.md` before
-affected implementation, keeping concise rationale for non-trivial decisions.
-Reconcile affected milestone scope, criteria, verification, and Current work;
-commit the planning change separately, then hand back to the requested role.
-Routine implementation details within the agreed requirements need no new
-requirement or repeated approval.
+Use the existing milestone for work needed to meet its agreed criteria, including
+fixes from a review it has yet to pass. For a proposed change outside that scope,
+settle where it belongs before editing the plan or implementing the change.
+
+- Once a milestone has passed review, preserve its definition and tracking row.
+  Create a new milestone with its own ID, criteria, verification, and status for
+  subsequent changes to that work, even if they touch the same files.
+- If the current milestone has yet to pass review, ask the user whether to
+  include the change in it or create a new milestone. Wait for their answer.
+  Honor a placement they already specified. If there is no current milestone,
+  create a new one for the change.
+- Only an explicit user instruction to make this particular change outside the
+  milestone plan permits ad hoc implementation. Keep it outside the milestone
+  records, including any milestone that has passed review.
+
+Resolve missing requirements with the user and update `SPEC.md` when the
+requirements change. Record the agreed milestone scope, criteria, and required
+verification in `MILESTONES.md` before implementation. If the user expands an
+unreviewed milestone, have the implementer reassess Done and Tested against the
+revised criteria. Update Current work and commit planning changes separately.
 
 ## Hand off
 
-Set Current work to the first implementation action and briefly summarize the
-plan. Explain the dependency chain: `spec-exec` implements and tests, then hands
-off to `spec-review`; only that reviewer verifies closure and marks Reviewed.
-For example: “Planning is ready. Use spec-exec to implement M0. After testing,
-the implementer will hand off; ask for a review to invoke spec-review.”
+Set Current work to the next action and briefly summarize the plan. For example,
+“M0 is ready. Invoke `spec-exec` to implement and test it, or `spec-iterate`
+to coordinate implementation and independent review.”
 
-Stop at the planning boundary unless the user has already requested the next
-role as well. If so, explicitly switch to and load that skill. If a required
-skill is unavailable, report it rather than silently assuming its role.
+For an implementation handoff, stop until the user explicitly invokes
+`spec-exec` or `spec-iterate` for this work. An invocation supplied with the
+planning request still counts. Switch to and load the named skill before
+implementation. Report a missing skill at handoff.

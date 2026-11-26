@@ -26,9 +26,10 @@
 
 Advancing to the next milestone requires the current one to be **Done + Tested**.
 The implementer maintains Done and Tested; the reviewer maintains Reviewed.
-Reviewed may lag when the user requests continued implementation. Ticks record
-completed passes; they do not certify later changes. Current work is a short,
-replaceable snapshot checked against `SPEC.md` and Git when resuming.
+Reviewed may lag when the user requests continued implementation. A review pass
+freezes that milestone's definition and tracking row. Record later planned
+changes in a new milestone. Current work is a short, replaceable snapshot checked
+against `SPEC.md` and Git when resuming.
 
 ---
 

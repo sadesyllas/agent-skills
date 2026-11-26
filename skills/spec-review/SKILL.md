@@ -19,24 +19,27 @@ Do not assume a clean working tree or that a previous tick covers later changes.
 
 `SPEC.md` and Git are authoritative. Current work is a replaceable resumption
 aid: reconcile stale notes against the actual files before proceeding. If an
-omission or conflict leaves a requirement unclear, ask the user. Use the change
-protocol in `spec-env` for agreed requirement changes before affected fixes;
-do not invent requirements during review.
+omission or conflict leaves a requirement unclear, ask the user. Route proposed
+scope changes through the [milestone change rules](../spec-env/SKILL.md#change-an-established-specification)
+before handing off affected fixes.
 
 ## Review and record findings
 
 1. Check the requested changes and relevant surrounding code against the spec,
    acceptance criteria, required verification, and `code-quality`. Check reported
    verification evidence and run targeted checks needed to assess correctness.
-2. Clear Reviewed for milestones being re-reviewed after relevant changes. Mark
-   Reviewed only when the whole milestone passes and required verification is
-   satisfied; a narrow review alone does not approve an entire milestone.
-   An unavailable required check is a blocker, not a pass.
+2. Mark Reviewed only when the whole milestone passes and required verification
+   succeeds. Preserve the definition and tracking row of every milestone that
+   has passed review. Review later changes under the milestone that owns them.
+   If a new finding calls for a change to previously reviewed work, route it
+   through the milestone change rules before handing it to the implementer.
+   An explicitly authorized ad hoc change can be reviewed on its own without
+   changing a milestone's status.
 3. For actionable problems, create or update `REVIEW.md` using
    [assets/REVIEW.template.md](assets/REVIEW.template.md). Give each finding a
-   stable ID, milestone, location, concrete problem and impact, and a verifiable
-   resolution. Keep findings concise; avoid speculative issues or style demands
-   unsupported by the applicable standards.
+   stable ID, its milestone or authorized ad hoc change, location, concrete
+   problem and impact, and a verifiable resolution. Keep findings concise and
+   grounded in the applicable standards.
 4. For repeated findings, replace stale evidence and guidance. Explain briefly
    why the attempted fix was insufficient and what would demonstrate resolution;
    do not append a history of review conversations.
@@ -66,7 +69,7 @@ On re-review, inspect the actual fixes and relevant verification; a coder's
 report alone does not close a finding. Only the reviewer resolves findings,
 marks Reviewed, or deletes and commits removal of `REVIEW.md`. Preserve findings
 outside the current review scope. Delete the file only when all its findings
-are resolved and their affected milestones have passed review.
+are resolved and the associated milestones or ad hoc changes have passed review.
 
 The absence of `REVIEW.md` means no findings file is present; it does not prove
 review occurred. The Reviewed table and Git history record completed review

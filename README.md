@@ -22,8 +22,9 @@ spec-env → spec-exec → spec-review
 | `spec-iterate` | Manually orchestrate sequential implementer and reviewer sub-agents across selected milestones. |
 | `code-quality` | Shared coding standards, including mandatory DRY for production logic. |
 
-Roles hand off explicitly and stop at their boundary unless the user has asked
-for the next role too. After implementation, the agent says the milestone is
+Planning stops until the user explicitly invokes `spec-exec` or `spec-iterate`
+by name for implementation. The user can include that invocation in the planning
+request. After implementation, the agent says the milestone is
 ready for review. Asking for a review invokes `spec-review`; the implementer does
 not silently become the reviewer. No additional agents are launched unless asked.
 Explicitly invoking `spec-iterate` requests that orchestration: after planning,
@@ -36,6 +37,14 @@ Each role replaces stale values at meaningful changes and handoffs. New sessions
 check the block against the spec and actual code before resuming. `REVIEW.md`
 contains findings while review is open; its absence alone does not prove review
 occurred.
+
+Work within a milestone includes the fixes needed to meet its agreed criteria.
+For a newly discussed change, a milestone that has passed review keeps its scope
+and status. Later changes to that work get a new milestone. If the current
+milestone has yet to pass review, the agent asks whether to include the change
+there or create a new milestone and waits for your choice. You can explicitly
+request an ad hoc change outside the milestone plan. That exception applies
+only to the change you named.
 
 There is **no `AGENTS.md`** — shared workflow rules live in the skills. Agents
 read relevant instructions and project state when starting or resuming, and
@@ -111,15 +120,15 @@ pwsh ./install.ps1 -Project C:\path\to\repo
 - Starting a project: invoke **`spec-env`** (e.g. ask the agent to "set
   up the spec and milestones"). Agree on `SPEC.md`, then derive `MILESTONES.md`.
   Missing planning files alone do not require this workflow for routine fixes.
-- Building: invoke **`spec-exec`** ("start building" / "implement the
-  next milestone"). It implements and tests one milestone, then hands off to
+- Building: invoke **`spec-exec`** (for example, "Use spec-exec to implement
+  the next milestone"). It implements and tests one milestone, then hands off to
   review — unless you tell it to continue implementation across several.
 - Reviewing: invoke **`spec-review`** or ask to "review the milestones".
   Findings go to `REVIEW.md`; fixes return to `spec-exec`. Ask for re-review
   when fixes are ready. Only the reviewer verifies closure and removes the file
   after all its findings are resolved and affected milestones pass review.
 - Changing roles: explicitly request a combined workflow if desired, such as
-  "implement M1, then review it". Otherwise each role stops at its handoff.
+  "Use spec-exec to implement M1, then review it". Otherwise each role stops at its handoff.
 - Iterating: explicitly invoke **`spec-iterate`** after `spec-env` has established
   the planning artifacts. It checks current progress through a read-only agent,
   asks separately for implementer and reviewer models and thinking efforts, then
@@ -134,8 +143,9 @@ pwsh ./install.ps1 -Project C:\path\to\repo
   first fix both fail review, the latest reviewer continues with `spec-exec` to
   fix the milestone, and a fresh reviewer verifies the result. This requires a
   host with sub-agent model/effort selection. In non-interactive mode, it makes
-  subsequent execution decisions without asking, records them in `DECISIONS.md`,
+  execution decisions within agreed milestone scope, records them in `DECISIONS.md`,
   and presents them for user review after the last selected milestone passes.
+  Adding new scope to an unreviewed milestone still requires your choice during the run.
   That review can lead to agreed amendment milestones. Initial specification
   and milestone planning still require the usual discussion and agreement.
   When explicitly asked to wrap up, it removes `SPEC.md` and `MILESTONES.md` only
