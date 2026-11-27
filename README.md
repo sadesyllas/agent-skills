@@ -9,7 +9,7 @@ is shared by all of them; only the install location differs.
 ## The flow
 
 ```text
-spec-env → spec-exec → spec-review
+spec-env → spec-exec → spec-review → spec-cleanup (when requested)
               ↑           │
               └── fixes ──┘
 ```
@@ -20,6 +20,7 @@ spec-env → spec-exec → spec-review
 | `spec-exec` | Implement, test, and fix findings; maintain Done and Tested. |
 | `spec-review` | Review changes and verify fixes; own REVIEW.md and Reviewed. |
 | `spec-iterate` | Manually orchestrate sequential implementer and reviewer sub-agents across selected milestones. |
+| `spec-cleanup` | Remove iteration planning files and ask how to handle the AFK decision ledger, commits, and branches. |
 | `code-quality` | Shared coding standards, including mandatory DRY for production logic. |
 
 Planning stops until the user explicitly invokes `spec-exec` or `spec-iterate`
@@ -55,9 +56,9 @@ project documents describe the current state.
 
 ## Install
 
-Symlink the skills into each tool's user-level skills directory. After a
-`git pull`, every supported tool (Claude Code, Codex, Antigravity, OpenCode,
-Grok Build, Cursor) sees the update with no re-install.
+Symlink the skills into each tool's user-level skills directory. A `git pull`
+updates skills that are already linked. Rerun the installer to pick up newly
+added skills such as `spec-cleanup`, or to refresh a copy-based installation.
 
 ```powershell
 # Windows / PowerShell
@@ -154,6 +155,12 @@ pwsh ./install.ps1 -Project C:\path\to\repo
   after all planned work and review pass, `REVIEW.md` is absent, and any
   non-interactive decisions and requested amendments have been reviewed and
   resolved. The decision ledger is retained unless its removal is also requested.
+- To clean up an iteration, ask for **`spec-cleanup`**. It removes `SPEC.md`
+  and `MILESTONES.md` by default. It asks separately whether to delete an
+  existing AFK decision ledger, squash the iteration, land it on the default
+  branch, and delete the local and remote iteration branches. Each optional
+  action needs your explicit approval. You can give those choices up front or
+  narrow the request, for example, “Use spec-cleanup for the planning files only.”
 
 ## Repository layout
 
@@ -174,6 +181,8 @@ skills/
     SKILL.md
     agents/
       openai.yaml             # disables implicit invocation in Codex
+  spec-cleanup/               # planning file and branch cleanup
+    SKILL.md
   code-quality/               # shared implementation and review standards
     SKILL.md
 install.ps1                   # symlink/copy into supported tools (Windows)
