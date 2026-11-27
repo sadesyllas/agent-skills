@@ -103,15 +103,16 @@ resuming writes after an interruption or checkout change.
 
 ## Handle changes to milestone scope
 
-Workers report proposed changes outside their assigned scope before editing.
-Plan new scope in a new milestone by default. Fixes needed to satisfy an
-unreviewed milestone's existing criteria stay in that milestone, including
-fixes from a failed review.
+Workers report proposed changes that add scope or fall outside their assigned
+milestone's agreed name or description before editing. Plan new scope in a new
+milestone by default. Fixes that fit an unreviewed milestone and satisfy its
+existing criteria stay there, including fixes from a failed review.
 
 - Once a milestone has passed review, preserve its definition and status.
   Create a new milestone for any new change to its reviewed work.
-- If the affected current milestone has yet to pass review, ask the user whether
-  to include the change there or create a new milestone. Wait for their answer
+- If the affected current milestone has yet to pass review, explain the mismatch
+  and ask whether to create a new milestone or expand the current one to include
+  the work despite the mismatch. Wait for the user's answer
   before changing the plan or dispatching the affected work, even in
   non-interactive mode. Honor a choice the user has already made.
 - Only an explicit user instruction to make the specific change outside the

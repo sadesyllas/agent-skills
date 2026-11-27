@@ -41,8 +41,10 @@ occurred.
 Work within a milestone includes the fixes needed to meet its agreed criteria.
 For a newly discussed change, a milestone that has passed review keeps its scope
 and status. Later changes to that work get a new milestone. If the current
-milestone has yet to pass review, the agent asks whether to include the change
-there or create a new milestone and waits for your choice. You can explicitly
+milestone has yet to pass review and a change falls outside its agreed name,
+description, or scope, the agent explains the mismatch and asks whether to
+create a new milestone or expand the current one. It waits for your choice
+before listing the change as current work or starting it. You can explicitly
 request an ad hoc change outside the milestone plan. That exception applies
 only to the change you named.
 

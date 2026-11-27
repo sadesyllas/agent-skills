@@ -27,12 +27,10 @@ invoked `spec-exec` or `spec-iterate` for this work.
 
 ## Implement and verify
 
-- Before editing, check whether the change is needed for the assigned milestone's
-  agreed scope and criteria. For additional work, follow the
+- Before editing, check that the work fits the assigned milestone's agreed
+  name, description, and scope and is needed to meet its acceptance criteria.
+  For a mismatch or additional work, follow the
   [milestone change rules](../spec-env/SKILL.md#change-an-established-specification).
-  Create a new milestone for changes to reviewed work. For a current unreviewed
-  milestone, ask the user whether to include the change there or in a new
-  milestone and wait for their choice, unless they already specified it.
   Use `spec-env` to record the agreed placement before starting the change.
 - Work outside the milestone plan only if the user explicitly requests that
   for the specific change. Keep its commit separate from milestone work and

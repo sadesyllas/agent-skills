@@ -19,9 +19,10 @@ Do not assume a clean working tree or that a previous tick covers later changes.
 
 `SPEC.md` and Git are authoritative. Current work is a replaceable resumption
 aid: reconcile stale notes against the actual files before proceeding. If an
-omission or conflict leaves a requirement unclear, ask the user. Route proposed
-scope changes through the [milestone change rules](../spec-env/SKILL.md#change-an-established-specification)
-before handing off affected fixes.
+omission or conflict leaves a requirement unclear, ask the user. If a proposed
+fix falls outside the milestone's agreed name, description, or scope, follow
+the [milestone change rules](../spec-env/SKILL.md#change-an-established-specification)
+before handing it off.
 
 ## Review and record findings
 

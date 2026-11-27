@@ -70,7 +70,9 @@ This block is a replaceable snapshot, not a log or another source of truth.
 Keep each field short; use a file link for detail. Update it when the active work,
 next action, blocker, or verification changes, and before pausing or handing off.
 Any active role may update this block within its scope. Preserve other roles'
-table ownership. On resumption, check the block against `SPEC.md`, Git, and actual
+table ownership. When placement is pending, record the open question in
+**Blocker** and wait for the user's choice before listing the proposed work
+under a milestone. On resumption, check the block against `SPEC.md`, Git, and actual
 files; correct stale notes before using them. Do not add session journals,
 revision columns, or duplicate status sections.
 
@@ -78,17 +80,20 @@ Commit `MILESTONES.md` separately after checking it against the agreed spec.
 
 ## Change an established specification
 
-Use the existing milestone for work needed to meet its agreed criteria, including
-fixes from a review it has yet to pass. For a proposed change outside that scope,
-settle where it belongs before editing the plan or implementing the change.
+Check each proposed change against the milestone's agreed name, description,
+and scope. Work that fits and is needed to meet its acceptance criteria stays
+in that milestone, including fixes from a review it has yet to pass.
 
 - Once a milestone has passed review, preserve its definition and tracking row.
   Create a new milestone with its own ID, criteria, verification, and status for
   subsequent changes to that work, even if they touch the same files.
-- If the current milestone has yet to pass review, ask the user whether to
-  include the change in it or create a new milestone. Wait for their answer.
-  Honor a placement they already specified. If there is no current milestone,
-  create a new one for the change.
+- If the current milestone has yet to pass review and the change adds scope or
+  does not fit its name or description, explain the mismatch. Ask whether
+  to create a new milestone or expand the current one to include the work
+  despite the mismatch. Wait for the user's choice before revising the
+  milestone, assigning the work, or starting it. Honor a placement the user
+  already specified for this change.
+- If there is no current milestone, create a new one for the change.
 - Only an explicit user instruction to make this particular change outside the
   milestone plan permits ad hoc implementation. Keep it outside the milestone
   records, including any milestone that has passed review.
